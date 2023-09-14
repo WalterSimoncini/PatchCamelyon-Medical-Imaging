@@ -1,0 +1,5 @@
+h5py>=3.9.0
+torchvision==0.15.2
+torch==2.0.1
+matplotlib>=3.7.3
+tqdm>=4.66.1
