@@ -106,3 +106,6 @@ data/*
 .vscode/*
 .DS_Store
 runs/*
+*.code-workspace
+
+wandb/
