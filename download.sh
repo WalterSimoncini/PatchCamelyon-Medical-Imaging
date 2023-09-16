@@ -17,7 +17,7 @@ gzip -d data/camelyonpatch_level_2_split_valid_y.h5.gz
 
 # Download and unpack the test data and targets
 gdown "https://drive.google.com/uc?export=download&id=1qV65ZqZvWzuIVthK8eVDhIwrbnsJdbg_" -O data/camelyonpatch_level_2_split_test_x.h5.gz
-gdown "https://drive.google.com/uc?export=download&id=17BHrSrwWKjYsOgTMmoqrIjDy6Fa2o_gP" -O data/camelyonpatch_level_2_split_test_x.h5.gz
+gdown "https://drive.google.com/uc?export=download&id=17BHrSrwWKjYsOgTMmoqrIjDy6Fa2o_gP" -O data/camelyonpatch_level_2_split_test_y.h5.gz
 
 gzip -d data/camelyonpatch_level_2_split_test_x.h5.gz
-gzip -d data/camelyonpatch_level_2_split_test_x.h5.gz
+gzip -d data/camelyonpatch_level_2_split_test_y.h5.gz
