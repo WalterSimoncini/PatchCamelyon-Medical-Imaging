@@ -1,3 +1,8 @@
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 def show(imgs: List[torch.tensor] | torch.tensor, labels: List[str | int] = None):
     if type(imgs) != list:
         imgs = [imgs]
