@@ -1,7 +1,9 @@
 import h5py
 import torch
-from torch.utils.data import Dataset
+
 from typing import Tuple
+from torch.utils.data import Dataset
+
 
 class PatchCamelyonDataset(Dataset):
     def __init__(self, data_path: str, targets_path: str, transform=None) -> None:
@@ -25,5 +27,3 @@ class PatchCamelyonDataset(Dataset):
             sample = self.transform(sample)
         
         return sample, target
-    
-
