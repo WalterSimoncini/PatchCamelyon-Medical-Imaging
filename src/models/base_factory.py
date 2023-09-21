@@ -5,6 +5,10 @@ from abc import ABC, abstractmethod
 
 class ModelFactory(ABC):
     @abstractmethod
+    def input_size(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
     def base_model(self) -> nn.Module:
         raise NotImplementedError
 
