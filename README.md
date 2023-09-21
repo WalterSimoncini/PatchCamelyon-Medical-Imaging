@@ -5,4 +5,5 @@ For information about the base repository consult [this link](https://github.com
 ## TODOs
 
 - We should probably include normalization and other augmentation techniques
-- Compute other metrics apart from accuracy (ROC, F1, recall)
+- Compute other metrics apart from accuracy (ROC, F1, recall, AUC)
+- Add a way of testing a model without training

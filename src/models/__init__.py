@@ -1,12 +1,15 @@
 import torch.nn as nn
 
 from src.enums import ModelType
+
 from .resnet18 import Resnet18Factory
+from .resnet50 import Resnet50Factory
 
 
 def get_model(type_: ModelType, weights_path: str = None) -> nn.Module:
     factory = {
-        ModelType.RESNET_18: Resnet18Factory
+        ModelType.RESNET_18: Resnet18Factory,
+        ModelType.RESNET_50: Resnet50Factory
     }[type_]()
 
     if weights_path is not None:

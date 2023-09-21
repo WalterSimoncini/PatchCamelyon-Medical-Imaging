@@ -9,3 +9,4 @@ class PatchCamelyonSplit(Enum):
 
 class ModelType(Enum):
     RESNET_18 = "resnet18"
+    RESNET_50 = "resnet50"
