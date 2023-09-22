@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 from abc import ABC, abstractmethod
@@ -12,6 +13,8 @@ class ModelFactory(ABC):
     def base_model(self) -> nn.Module:
         raise NotImplementedError
 
-    @abstractmethod
     def trained_model(self, weights_path: str) -> nn.Module:
-        raise NotImplementedError
+        model = self.base_model()
+        model.load_state_dict(torch.load(weights_path))
+
+        return model, self.input_size()

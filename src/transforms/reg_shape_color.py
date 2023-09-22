@@ -22,6 +22,6 @@ class RegularShapeAndColorTransform(TransformFactory):
             transforms.RandomVerticalFlip(),
             transforms.RandomRotation(degrees=360),
             transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0),
-            # FIXME: Add normalization?
+            transforms.Normalize(mean=[0.7007, 0.5384, 0.6916], std=[0.1818, 0.2008, 0.1648]),
             transforms.Resize(input_size, antialias=True)
         ])

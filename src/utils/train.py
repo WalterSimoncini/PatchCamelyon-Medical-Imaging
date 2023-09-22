@@ -35,7 +35,7 @@ def train(
             train_loader=train_loader
         )
 
-        val_loss, val_accuracy = evaluate_model(
+        val_loss, val_accuracy, val_auc = evaluate_model(
             model=model,
             test_loader=val_loader,
             loss_fn=loss_fn,
@@ -49,6 +49,7 @@ def train(
             "loss/val": val_loss,
             "acc/train": train_accuracy,
             "acc/val": val_accuracy,
+            "auc/val": val_auc
         })
 
         logging.info(f"the train accuracy was {train_accuracy} (loss: {train_loss})")

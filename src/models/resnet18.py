@@ -13,6 +13,3 @@ class Resnet18Factory(ModelFactory):
         model.fc = nn.Linear(in_features=512, out_features=2)
 
         return model
-
-    def trained_model(self, weights_path: str) -> nn.Module:
-        raise NotImplementedError

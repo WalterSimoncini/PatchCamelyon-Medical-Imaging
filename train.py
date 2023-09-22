@@ -68,7 +68,7 @@ def main(args):
         device=device
     )
 
-    _, test_accuracy = evaluate_model(
+    _, test_accuracy, _ = evaluate_model(
         model=model,
         test_loader=test_loader,
         loss_fn=loss_fn,
@@ -98,10 +98,10 @@ if __name__ == "__main__":
     wandb.login()
 
     # Training Hyperparameters
-    parser = argparse.ArgumentParser(description="MI Project (Patch Camelyon)")
+    parser = argparse.ArgumentParser(description="Patch Camelyon Training")
 
-    parser.add_argument("--output_path", default="runs", type=str, help="Path to save the model")
-    parser.add_argument("--batch_size", default=64, type=int, help="Batch size for training and validation")
+    parser.add_argument("--output-path", default="runs", type=str, help="Path to save the model")
+    parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
     parser.add_argument("--lr", default=1e-5, type=float, help="Learning rate")
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
