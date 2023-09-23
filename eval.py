@@ -48,7 +48,8 @@ def main(args):
             device=device,
             transform=get_transform(type_=args.tta_transform, input_size=input_size),
             default_transform=get_transform(type_=TransformType.EVALUATION, input_size=input_size),
-            n_samples=args.tta_samples
+            n_samples=args.tta_samples,
+            original_image_weight=args.tta_original_weight
         )
     else:
         test_loss, test_accuracy, test_auc = evaluate_model(
@@ -73,6 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("--tta", action=argparse.BooleanOptionalAction, help="Whether to use test-time augmentation")
     parser.add_argument("--tta-transform", type=TransformType, choices=list(TransformType), help="The transform used for TTA")
     parser.add_argument("--tta-samples", type=int, default=5, help="The number of TTA samples to be used")
+    parser.add_argument("--tta-original-weight", type=float, default=None, help="The weight [0, 1] given to the original image for weighted TTA. If not specified all images are weighted equally")
     parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), default=PatchCamelyonSplit.TEST, help="The dataset split to test on")
 
     args = parser.parse_args()

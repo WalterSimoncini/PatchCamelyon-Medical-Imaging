@@ -11,3 +11,5 @@ For information about the base repository consult [this link](https://github.com
 - TTA -- OK (to test)
 - Try normalization before applying rotations
 - Maybe we can weight TTA over the generated samples (e.g. 80% weight to the original image, 20% divided on the others) and tune it on the validation set? Or use different transforms?
+- Maybe also save the optimizer state dict? So we can resume training?
+- Maybe preprocess images for scaling, so it'll be faster to train models

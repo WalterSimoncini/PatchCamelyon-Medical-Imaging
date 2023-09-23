@@ -57,7 +57,8 @@ def evaluate_model_tta(
     device: torch.device,
     transform: nn.Module,
     default_transform: nn.Module,
-    n_samples: int = 5
+    n_samples: int = 5,
+    original_image_weight: float = None
 ):
     """
         Evaluates the model using TTA (Test-Time Augmentation).
@@ -98,14 +99,21 @@ def evaluate_model_tta(
             # images and compute the mean prediction
             preds = model(transformed_images)
             test_loss += loss_fn(preds, target.repeat(n_samples + 1))
+            preds = softmax(preds, dim=1)
 
-            preds = softmax(preds, dim=1).mean(dim=0, keepdim=True)
+            if original_image_weight is None:
+                preds = preds.mean(dim=0)
+            else:
+                transformed_image_weight = (1 - original_image_weight) / n_samples
 
-            # Remove the extra dimension for preds and get the
-            # positive class probability
-            preds = preds.squeeze()
+                image_weights = torch.zeros(n_samples + 1) + transformed_image_weight
+                image_weights[0] = original_image_weight
+                image_weights = image_weights.repeat(2, 1).T
+
+                preds = preds.sum(dim=0)
 
             ground_truth[i] = target.cpu().item()
+            # Get the positive class probability for the AUC computation
             true_class_probs[i] = preds[1].cpu().item()
 
             # Add one to the correct preds if the predicted
