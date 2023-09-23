@@ -9,34 +9,54 @@ from src.enums import PatchCamelyonSplit, ModelType, TransformType
 
 from src.models import get_model
 from src.transforms import get_transform
-from src.utils.eval import evaluate_model
 from src.datasets.loaders import get_data_loader
+from src.utils.eval import evaluate_model, evaluate_model_tta
 
 
 def main(args):
+    # Verify that a transform was provided if TTA was chosen
+    if args.tta and args.tta_transform is None:
+        raise ValueError(f"No transform was provided for TTA")
+
     device_name = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device_name)
 
     loss_fn = nn.CrossEntropyLoss()
     model, input_size = get_model(type_=args.model, weights_path=args.model_path)
 
-    test_loader = get_data_loader(
-        split=PatchCamelyonSplit.TEST,
-        batch_size=args.batch_size,
-        transform=get_transform(
+    if args.tta:
+        test_transform = None
+    else:
+        test_transform = get_transform(
             type_=TransformType.EVALUATION,
             input_size=input_size
         )
+
+    test_loader = get_data_loader(
+        split=args.split,
+        batch_size=args.batch_size,
+        transform=test_transform
     )
 
     model = model.to(device)
 
-    test_loss, test_accuracy, test_auc = evaluate_model(
-        model=model,
-        test_loader=test_loader,
-        loss_fn=loss_fn,
-        device=device
-    )
+    if args.tta:
+        test_loss, test_accuracy, test_auc = evaluate_model_tta(
+            model=model,
+            test_loader=test_loader,
+            loss_fn=loss_fn,
+            device=device,
+            transform=get_transform(type_=args.tta_transform, input_size=input_size),
+            default_transform=get_transform(type_=TransformType.EVALUATION, input_size=input_size),
+            n_samples=args.tta_samples
+        )
+    else:
+        test_loss, test_accuracy, test_auc = evaluate_model(
+            model=model,
+            test_loader=test_loader,
+            loss_fn=loss_fn,
+            device=device
+        )
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
@@ -50,6 +70,10 @@ if __name__ == "__main__":
     parser.add_argument("--model-path", default="runs", type=str, help="Path to the model weights", required=True)
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
+    parser.add_argument("--tta", action=argparse.BooleanOptionalAction, help="Whether to use test-time augmentation")
+    parser.add_argument("--tta-transform", type=TransformType, choices=list(TransformType), help="The transform used for TTA")
+    parser.add_argument("--tta-samples", type=int, default=5, help="The number of TTA samples to be used")
+    parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), default=PatchCamelyonSplit.TEST, help="The dataset split to test on")
 
     args = parser.parse_args()
 

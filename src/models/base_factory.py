@@ -15,6 +15,8 @@ class ModelFactory(ABC):
 
     def trained_model(self, weights_path: str) -> nn.Module:
         model = self.base_model()
-        model.load_state_dict(torch.load(weights_path))
+        model.load_state_dict(
+            torch.load(weights_path, map_location=torch.device("cpu"))
+        )
 
         return model, self.input_size()

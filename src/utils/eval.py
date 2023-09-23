@@ -48,3 +48,81 @@ def evaluate_model(
     )
 
     return test_loss, accuracy, metrics.auc(fpr, tpr)
+
+
+def evaluate_model_tta(
+    model: nn.Module,
+    test_loader: DataLoader,
+    loss_fn: nn.Module,
+    device: torch.device,
+    transform: nn.Module,
+    default_transform: nn.Module,
+    n_samples: int = 5
+):
+    """
+        Evaluates the model using TTA (Test-Time Augmentation).
+
+        For each image this evaluator generates n_samples using the
+        given transform and averages the model prediction over them
+
+        TODO: allow the user to specify multiple transformation
+
+        :param transform: the transform used for TTA
+        :param default_transform: the default transformation applied to
+                                  test samples if TTA was not to be used
+    """
+    batch_size = test_loader.batch_size
+
+    if batch_size != 1:
+        raise ValueError(f"the data loader batch size must be 1: {batch_size} given")
+
+    model.eval()
+
+    ground_truth = np.zeros(len(test_loader.dataset))
+    true_class_probs = np.zeros(len(test_loader.dataset))
+
+    test_loss, correct_preds = 0, 0
+
+    with torch.no_grad():
+        for i, (image, target) in enumerate(tqdm(test_loader)):
+            image, target = image.to(device), target.to(device)
+
+            # Generate n transformations of the given image, plus the
+            # original image with the default transformation
+            transformed_images = torch.cat(
+                [default_transform(image)] + [transform(image) for _ in range(n_samples)],
+                dim=0
+            ).to(device)
+
+            # Predict the labels for all transformed
+            # images and compute the mean prediction
+            preds = model(transformed_images)
+            test_loss += loss_fn(preds, target.repeat(n_samples + 1))
+
+            preds = softmax(preds, dim=1).mean(dim=0, keepdim=True)
+
+            # Remove the extra dimension for preds and get the
+            # positive class probability
+            preds = preds.squeeze()
+
+            ground_truth[i] = target.cpu().item()
+            true_class_probs[i] = preds[1].cpu().item()
+
+            # Add one to the correct preds if the predicted
+            # label and the target match
+            target_label = target.squeeze()
+            predicted_label = preds.argmax(dim=0)
+
+            if predicted_label == target_label:
+                correct_preds += 1
+
+    test_loss /= len(test_loader.dataset)
+    accuracy = correct_preds / len(test_loader.dataset)
+
+    fpr, tpr, _ = metrics.roc_curve(
+        ground_truth,
+        true_class_probs,
+        pos_label=1
+    )
+
+    return test_loss, accuracy, metrics.auc(fpr, tpr)
