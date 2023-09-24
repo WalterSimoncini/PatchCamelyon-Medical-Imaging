@@ -17,12 +17,11 @@ class RegularShapeAndColorTransform(TransformFactory):
     """
     def transform(self, input_size: int) -> nn.Module:
         return transforms.Compose([
-            # FIXME: Maybe we can add this back?
-            # FIXME: Verify if it's better to scale the image before applying transforms
-            # transforms.Normalize(mean=[0.7007, 0.5384, 0.6916], std=[0.1818, 0.2008, 0.1648]),
             transforms.Resize(input_size, antialias=True),
             transforms.RandomHorizontalFlip(),
             transforms.RandomVerticalFlip(),
             transforms.RandomRotation(degrees=360),
+            # Seems like applying the jitter after the rotation works best, but this
+            # has only been tested on a small scale experiment. More tests are needed
             transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0)
         ])
