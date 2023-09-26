@@ -6,6 +6,7 @@ from src.enums import ModelType
 from .resnet18 import Resnet18Factory
 from .resnet50 import Resnet50Factory
 from .densenet121 import DenseNet121Factory
+from .vit16b import ViT16BFactory
 
 
 def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, int]:
@@ -13,7 +14,8 @@ def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, in
     factory = {
         ModelType.RESNET_18: Resnet18Factory,
         ModelType.RESNET_50: Resnet50Factory,
-        ModelType.DENSENET_121: DenseNet121Factory
+        ModelType.DENSENET_121: DenseNet121Factory,
+        ModelType.VIT_16_B: ViT16BFactory
     }[type_]()
 
     if weights_path is not None:
