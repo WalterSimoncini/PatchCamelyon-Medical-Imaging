@@ -1,4 +1,5 @@
 import os
+import json
 import torch
 import wandb
 import logging
@@ -39,15 +40,25 @@ def main(args):
     device_name = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device_name)
 
+    run_config = vars(args) | {
+        "device": device_name,
+        "optimizer": optimizer.__class__.__name__,
+        "loss_fn": loss_fn.__class__.__name__,
+        "model": args.model.value
+    }
+
+    # Convert the enum to a string so it can be serialized
+    run_config["transform"] = run_config["transform"].value
+
+    # Save the run configuration to a config.json file
+    # in the run folder
+    with open(os.path.join(run_folder, "config.json"), "w") as config_file:
+        config_file.write(json.dumps(run_config))
+
     run = wandb.init(
         project="PatchCamelyon",
         entity="mi_ams",
-        config=vars(args) | {
-            "device": device_name,
-            "optimizer": optimizer.__class__.__name__,
-            "loss_fn": loss_fn.__class__.__name__,
-            "model": args.model.value
-        }
+        config=run_config
     )
 
     model = model.to(device)

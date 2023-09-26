@@ -50,10 +50,16 @@ def main(args):
 
     output_file = h5py.File(output_file_path, "w")
 
-    E_dataset = output_file.create_dataset("E", (len(dataset), 96, 96, 3), dtype="uint8")
-    H_dataset = output_file.create_dataset("H", (len(dataset), 96, 96, 3), dtype="uint8")
+    max_dataset_shape = (len(dataset), 96, 96, 3)
 
-    norm_dataset = output_file.create_dataset("norm", (len(dataset), 96, 96, 3), dtype="uint8")
+    E_dataset = output_file.create_dataset("E", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
+    H_dataset = output_file.create_dataset("H", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
+
+    norm_dataset = output_file.create_dataset("norm", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
+
+    # As some samples may be skipped due to failures we
+    # need to keep track of the last index we wrote to
+    current_cell_index = 0
 
     # Track how many samples could not be normalized
     normalization_errors = 0
@@ -69,16 +75,20 @@ def main(args):
             )
 
             # Save the normalized outputs to the datasets
-            E_dataset[i, :, :, :] = E.numpy()
-            H_dataset[i, :, :, :] = H.numpy()
-            norm_dataset[i, :, :, :] = norm.numpy()
-        except Exception as ex:
-            # For failed normalizations we keep the original
-            # image, but leave the E and H datasets blank
-            norm_dataset[i, :, :, :] = image
-            normalization_errors += 1
+            E_dataset[current_cell_index, :, :, :] = E.numpy()
+            H_dataset[current_cell_index, :, :, :] = H.numpy()
+            norm_dataset[current_cell_index, :, :, :] = norm.numpy()
 
+            current_cell_index += 1
+        except Exception as ex:
+            normalization_errors += 1
             logging.warning(f"could not process sample {i}: {ex}")
+
+    # Resize datasets to remove empty cells
+    E_dataset.resize(current_cell_index, axis=0)
+    H_dataset.resize(current_cell_index, axis=0)
+
+    norm_dataset.resize(current_cell_index, axis=0)
 
     output_file.close()
     logging.info(f"done normalizing images. Encountered {normalization_errors} errors")

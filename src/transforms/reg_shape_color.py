@@ -20,8 +20,6 @@ class RegularShapeAndColorTransform(TransformFactory):
             transforms.Resize(input_size, antialias=True),
             transforms.RandomHorizontalFlip(),
             transforms.RandomVerticalFlip(),
-            transforms.RandomRotation(degrees=360),
-            # Seems like applying the jitter after the rotation works best, but this
-            # has only been tested on a small scale experiment. More tests are needed
-            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0)
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0),
+            transforms.RandomRotation(degrees=360)
         ])

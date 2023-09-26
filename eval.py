@@ -18,6 +18,12 @@ def main(args):
     if args.tta and args.tta_transform is None:
         raise ValueError(f"No transform was provided for TTA")
 
+    if args.tta:
+        logging.info(f"running TTA with {args.tta_samples} samples")
+
+    if args.tta and args.tta_original_weight:
+        logging.info(f"running weighted TTA with weight: {args.tta_original_weight}")
+
     device_name = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device_name)
 
