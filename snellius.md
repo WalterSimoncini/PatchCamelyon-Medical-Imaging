@@ -42,10 +42,16 @@ cd pcam
 pip install -r requirements.txt
 ```
 
-Finally dowload the data by running
+Dowload the data by running
 
 ```sh
 sh download.sh
+```
+
+And finally log into wandb to track jos:
+
+```sh
+wandb login
 ```
 
 ## Running Jobs
