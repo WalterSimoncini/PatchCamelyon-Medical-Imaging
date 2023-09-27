@@ -7,7 +7,7 @@ from .resnet18 import Resnet18Factory
 from .resnet50 import Resnet50Factory
 from .densenet121 import DenseNet121Factory
 from .vit16b import ViT16BFactory
-from .inception3 import Inception3Factory
+from .inception3 import InceptionV3Factory
 
 
 def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, int]:
@@ -17,7 +17,7 @@ def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, in
         ModelType.RESNET_50: Resnet50Factory,
         ModelType.DENSENET_121: DenseNet121Factory,
         ModelType.VIT_16_B: ViT16BFactory,
-        ModelType.INCEPTION_3: Inception3Factory
+        ModelType.INCEPTION_V_3: InceptionV3Factory
     }[type_]()
 
     if weights_path is not None:
