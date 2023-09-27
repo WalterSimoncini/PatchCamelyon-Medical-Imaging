@@ -12,6 +12,7 @@ class ModelType(Enum):
     RESNET_50 = "resnet50"
     DENSENET_121 = "densenet121"
     VIT_16_B = "vit-16-b"
+    INCEPTION_3 = "inception3"
 
 
 class TransformType(Enum):
