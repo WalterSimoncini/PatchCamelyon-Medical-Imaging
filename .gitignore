@@ -168,3 +168,4 @@ runs/*
 *.code-workspace
 
 wandb/
+test/

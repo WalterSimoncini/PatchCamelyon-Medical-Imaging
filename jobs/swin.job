@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=18
 #SBATCH --gpus=1
 #SBATCH --partition=gpu
-#SBATCH --time=03:00:00
+#SBATCH --time=05:00:00
 
 # Execute program located in $HOME
 module purge
@@ -15,6 +15,6 @@ module load Anaconda3/2022.05
 source activate medical-imaging
 
 srun python $HOME/pcam/train.py \
-    --model vit-16-b \
+    --model swin-v2-b \
     --epochs 5 \
     --transform "regular-shape-color"
