@@ -42,6 +42,9 @@ cd pcam
 pip install -r requirements.txt
 ```
 
+! NOTE - folder name in the job files has been changed to 'PatchCamelyon-Medical-Imaging' to enable synchronizing with github. 
+! Either change the paths in the .job file you want to use, or name your folder 'PatchCamelyon-Medical-Imaging' instead of 'pcam'.
+
 Dowload the data by running
 
 ```sh

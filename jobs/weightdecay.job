@@ -20,7 +20,7 @@ WD_VALUES=(0. 1e-6 1e-5 1e-4 1e-3 1e-2)
 
 # Train inception3 for multiple weight decay values
 for w in "${WD_VALUES[@]}"; do
-    srun python $HOME/pcam/train.py \
+    srun python $HOME/PatchCamelyon-Medical-Imaging/train.py \
     --model $MODEL_TYPE \
     --epochs 5 \
     --transform "evaluation" \

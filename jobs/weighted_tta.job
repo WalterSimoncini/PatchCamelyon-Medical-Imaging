@@ -14,13 +14,13 @@ module load Anaconda3/2022.05
 
 # Experiment config
 MODEL_TYPE="vit-16-b"
-MODEL_PATH="$HOME/pcam/runs/vit16b-regular/model_0.pt"
+MODEL_PATH="$HOME/PatchCamelyon-Medical-Imaging/runs/vit16b-regular/model_0.pt"
 TTA_WEIGHTS=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
 TTA_SAMPLES=5
 
 # Run weighted TTA experiments
 for weight in "${TTA_WEIGHTS[@]}"; do
-    srun python $HOME/pcam/eval.py \
+    srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
         --model-path $MODEL_PATH \
         --model $MODEL_TYPE \
         --tta \

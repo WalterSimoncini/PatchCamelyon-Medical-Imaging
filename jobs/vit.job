@@ -12,7 +12,7 @@ module purge
 module load 2022
 module load Anaconda3/2022.05
 
-srun python $HOME/pcam/train.py \
+srun python $HOME/PatchCamelyon-Medical-Imaging/train.py \
     --model vit-16-b \
     --epochs 5 \
     --transform "regular-shape-color"

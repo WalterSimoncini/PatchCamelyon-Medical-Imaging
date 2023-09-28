@@ -14,18 +14,18 @@ module load Anaconda3/2022.05
 
 # Experiment config
 MODEL_TYPE="vit-16-b"
-MODEL_PATH="$HOME/pcam/runs/vit16b-regular/model_0.pt"
+MODEL_PATH="$HOME/PatchCamelyon-Medical-Imaging/runs/vit16b-regular/model_0.pt"
 
 # Evaluate the model without TTA
 echo "Evaluation"
-srun python $HOME/pcam/eval.py \
+srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
     --model-path $MODEL_PATH \
     --model $MODEL_TYPE \
     --split test
 
 # Evaluate the model with 5 and 10 samples TTA
 echo "TTA with 5 samples"
-srun python $HOME/pcam/eval.py \
+srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
     --model-path $MODEL_PATH \
     --model $MODEL_TYPE \
     --tta \
@@ -35,7 +35,7 @@ srun python $HOME/pcam/eval.py \
     --tta-samples 5
 
 echo "TTA with 10 samples"
-srun python $HOME/pcam/eval.py \
+srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
     --model-path $MODEL_PATH \
     --model $MODEL_TYPE \
     --tta \
