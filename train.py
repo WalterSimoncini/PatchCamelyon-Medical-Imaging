@@ -19,6 +19,9 @@ from src.transforms import get_transform
 from src.utils.train import train
 from src.utils.eval import evaluate_model
 from src.utils.logging import configure_logging
+from src.utils.seedeverything import seed_everything
+
+torch.random.manual_seed(42)
 
 
 def main(args):
@@ -32,7 +35,7 @@ def main(args):
 
     loss_fn = nn.CrossEntropyLoss()
     model, input_size = get_model(type_=args.model)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
 
     train_transform = get_transform(type_=args.transform, input_size=input_size)
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
@@ -107,6 +110,7 @@ def get_data_loaders(
 if __name__ == "__main__":
     configure_logging()
     wandb.login()
+    seed_everything(42)
 
     # Training Hyperparameters
     parser = argparse.ArgumentParser(description="Patch Camelyon Training")
