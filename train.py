@@ -33,7 +33,7 @@ def main(args):
 
     loss_fn = nn.CrossEntropyLoss()
     model, input_size = get_model(type_=args.model)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
     train_transform = get_transform(type_=args.transform, input_size=input_size)
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
@@ -116,6 +116,7 @@ if __name__ == "__main__":
     parser.add_argument("--output-path", default="runs", type=str, help="Path to save the model")
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
     parser.add_argument("--lr", default=1e-5, type=float, help="Learning rate")
+    parser.add_argument("--wd", default=1e-5, type=float, help="Weight decay")
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
     parser.add_argument("--transform", type=TransformType, choices=list(TransformType), required=True, help="The transform pipeline to be used for training")
