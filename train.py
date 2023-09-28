@@ -69,6 +69,8 @@ def main(args):
         test_transform=test_transform
     )
 
+    logging.info(f"Training model with weight decay of {args.wd}")
+
     train(
         model=model,
         train_loader=train_loader,
