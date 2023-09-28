@@ -49,8 +49,9 @@ def main(args):
     )
 
     output_file = h5py.File(output_file_path, "w")
-
     max_dataset_shape = (len(dataset), 96, 96, 3)
+
+    y_dataset = output_file.create_dataset("y", len(dataset), dtype="uint8", maxshape=len(dataset))
 
     E_dataset = output_file.create_dataset("E", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
     H_dataset = output_file.create_dataset("H", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
@@ -65,7 +66,7 @@ def main(args):
     normalization_errors = 0
 
     for i in tqdm(range(len(dataset))):
-        image, _ = dataset[i]
+        image, target = dataset[i]
         image = (image.permute(1, 2, 0) * 255).to(torch.uint8)
 
         try:
@@ -78,6 +79,7 @@ def main(args):
             E_dataset[current_cell_index, :, :, :] = E.numpy()
             H_dataset[current_cell_index, :, :, :] = H.numpy()
             norm_dataset[current_cell_index, :, :, :] = norm.numpy()
+            y_dataset[current_cell_index] = target
 
             current_cell_index += 1
         except Exception as ex:
@@ -87,6 +89,8 @@ def main(args):
     # Resize datasets to remove empty cells
     E_dataset.resize(current_cell_index, axis=0)
     H_dataset.resize(current_cell_index, axis=0)
+
+    y_dataset.resize(current_cell_index, axis=0)
 
     norm_dataset.resize(current_cell_index, axis=0)
 
