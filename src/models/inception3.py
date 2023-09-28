@@ -21,4 +21,7 @@ class InceptionV3Wrapper(nn.Module):
         self.model = model
 
     def forward(self, x):
-        return self.model(x).logits
+        if self.training:
+            return self.model(x).logits
+        else:
+            return self.model(x)
