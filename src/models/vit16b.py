@@ -11,7 +11,7 @@ class ViT16BFactory(ModelFactory):
     def base_model(self) -> nn.Module:
         model = vit_b_16(weights=ViT_B_16_Weights.DEFAULT)
         model.heads = nn.Sequential(
-          nn.Linear(in_features=768, out_features=2)
+          nn.Linear(in_features=1024, out_features=2)
         )
 
         return model

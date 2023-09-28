@@ -12,7 +12,7 @@ class ModelType(Enum):
     RESNET_50 = "resnet50"
     DENSENET_121 = "densenet121"
     VIT_16_B = "vit-16-b"
-    VIT_14_H = "vit-14-h"
+    VIT_32_L = "vit-32-l"
     SWIN_V2_B = "swin-v2-b"
 
 

@@ -6,10 +6,9 @@ from torchvision.models import swin_v2_b, Swin_V2_B_Weights
 
 class SwinV2BFactory(ModelFactory):
     def input_size(self) -> int:
-        # Any input size is fine, so with this size we avoid rescaling
-        # FIXME: does this affect the accuracy?
-        # FIXME: we tested with 96, now we are testing 224
-        return 96
+        # Any input size is fine, but a bigger one seems
+        # to be working better
+        return 224
 
     def base_model(self) -> nn.Module:
         model = swin_v2_b(weights=Swin_V2_B_Weights.DEFAULT)
