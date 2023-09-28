@@ -21,8 +21,6 @@ from src.utils.eval import evaluate_model
 from src.utils.logging import configure_logging
 from src.utils.seedeverything import seed_everything
 
-torch.random.manual_seed(42)
-
 
 def main(args):
     # Configure and create output directories
