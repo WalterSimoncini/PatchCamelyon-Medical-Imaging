@@ -18,8 +18,8 @@ from src.transforms import get_transform
 
 from src.utils.train import train
 from src.utils.eval import evaluate_model
-from src.utils.logging import configure_logging
 from src.utils.seed import seed_everything
+from src.utils.logging import configure_logging
 
 
 def main(args):
@@ -69,7 +69,7 @@ def main(args):
         test_transform=test_transform
     )
 
-    logging.info(f"Training model with weight decay of {args.wd}")
+    logging.info(f"training model with weight decay of {args.wd}")
 
     train(
         model=model,
@@ -109,8 +109,9 @@ def get_data_loaders(
 
 if __name__ == "__main__":
     configure_logging()
-    wandb.login()
     seed_everything(42)
+
+    wandb.login()
 
     # Training Hyperparameters
     parser = argparse.ArgumentParser(description="Patch Camelyon Training")
