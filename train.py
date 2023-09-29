@@ -19,7 +19,7 @@ from src.transforms import get_transform
 from src.utils.train import train
 from src.utils.eval import evaluate_model
 from src.utils.logging import configure_logging
-from src.utils.seedeverything import seed_everything
+from src.utils.seed import seed_everything
 
 
 def main(args):
