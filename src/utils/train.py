@@ -68,9 +68,8 @@ def train(
             torch.save(model.state_dict(), os.path.join(run_folder, f"model_{epoch}.pt"))
             wandb.run.summary["best_model_path"] = os.path.join(run_folder, f"model_{epoch}.pt")
 
-            # save the optimizer to disk
-            torch.save(optimizer.state_dict(), os.path.join(run_folder, f"optimizer_{epoch}.pt"))
-            wandb.run.summary["best_optimizer_path"] = os.path.join(run_folder, f"optimizer_{epoch}.pt")
+        # save the optimizer to disk
+        torch.save(optimizer.state_dict(), os.path.join(run_folder, f"optimizer.pt"))
 
 
 def train_epoch(
