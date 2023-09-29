@@ -13,6 +13,8 @@ class ModelType(Enum):
     DENSENET_121 = "densenet121"
     VIT_16_B = "vit-16-b"
     INCEPTION_V_3 = "inception3"
+    VIT_32_L = "vit-32-l"
+    SWIN_V2_B = "swin-v2-b"
 
 
 class TransformType(Enum):

@@ -15,33 +15,29 @@ module load Anaconda3/2022.05
 source activate medical-imaging
 
 # Experiment config
+TTA_WEIGHT=0.4
 MODEL_TYPE="vit-16-b"
-MODEL_PATH="$HOME/PatchCamelyon-Medical-Imaging/runs/vit16b-regular/model_0.pt"
-
-# Evaluate the model without TTA
-echo "Evaluation"
-srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
-    --model-path $MODEL_PATH \
-    --model $MODEL_TYPE \
-    --split test
+MODEL_PATH="$HOME/pcam/runs/2023-09-26T141939/model_1.pt"
 
 # Evaluate the model with 5 and 10 samples TTA
 echo "TTA with 5 samples"
-srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
+srun python $HOME/pcam/eval.py \
     --model-path $MODEL_PATH \
     --model $MODEL_TYPE \
     --tta \
     --split test \
     --batch-size 1 \
     --tta-transform "regular-shape-color" \
-    --tta-samples 5
+    --tta-samples 5 \
+    --tta-original-weight $TTA_WEIGHT
 
 echo "TTA with 10 samples"
-srun python $HOME/PatchCamelyon-Medical-Imaging/eval.py \
+srun python $HOME/pcam/eval.py \
     --model-path $MODEL_PATH \
     --model $MODEL_TYPE \
     --tta \
     --split test \
     --batch-size 1 \
     --tta-transform "regular-shape-color" \
-    --tta-samples 10
+    --tta-samples 10 \
+    --tta-original-weight $TTA_WEIGHT

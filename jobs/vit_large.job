@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=18
 #SBATCH --gpus=1
 #SBATCH --partition=gpu
-#SBATCH --time=03:00:00
+#SBATCH --time=08:00:00
 
 # Execute program located in $HOME
 module purge
@@ -14,7 +14,7 @@ module load Anaconda3/2022.05
 
 source activate medical-imaging
 
-srun python $HOME/PatchCamelyon-Medical-Imaging/train.py \
-    --model vit-16-b \
-    --epochs 5 \
+srun python $HOME/pcam-large-vit/train.py \
+    --model vit-32-l \
+    --epochs 10 \
     --transform "regular-shape-color"
