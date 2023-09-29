@@ -169,3 +169,5 @@ runs/*
 
 wandb/
 test/
+wsl_images/
+camelyon17_wsl/
