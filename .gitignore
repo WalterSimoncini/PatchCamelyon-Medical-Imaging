@@ -168,6 +168,5 @@ runs/*
 *.code-workspace
 
 wandb/
-test/
-wsl_images/
 camelyon17_wsl/
+wsl_images/

@@ -25,20 +25,20 @@ source activate medical-imaging
 Compress the repository and copy it to your home folder with the following command:
 
 ```sh
-tar -czf pcam.tar.gz pcam
-scp pcam.tar.gz user@snellius.surf.nl:/home/user
+tar -czf PatchCamelyon-Medical-Imaging.tar.gz PatchCamelyon-Medical-Imaging
+scp PatchCamelyon-Medical-Imaging.tar.gz user@snellius.surf.nl:/home/user
 ```
 
 Unpack the archive on Snellius with
 
 ```sh
-tar -xf pcam.tar.gz
+tar -xf PatchCamelyon-Medical-Imaging.tar.gz
 ```
 
 Enter the folder and install the required packages
 
 ```sh
-cd pcam
+cd PatchCamelyon-Medical-Imaging
 pip install -r requirements.txt
 ```
 

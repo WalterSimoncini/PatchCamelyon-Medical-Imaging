@@ -18,6 +18,7 @@ from src.transforms import get_transform
 
 from src.utils.train import train
 from src.utils.eval import evaluate_model
+from src.utils.seed import seed_everything
 from src.utils.logging import configure_logging
 
 
@@ -32,7 +33,7 @@ def main(args):
 
     loss_fn = nn.CrossEntropyLoss()
     model, input_size = get_model(type_=args.model)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
     train_transform = get_transform(type_=args.transform, input_size=input_size)
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
@@ -67,6 +68,8 @@ def main(args):
         train_transform=train_transform,
         test_transform=test_transform
     )
+
+    logging.info(f"training model with weight decay of {args.wd}")
 
     train(
         model=model,
@@ -106,6 +109,8 @@ def get_data_loaders(
 
 if __name__ == "__main__":
     configure_logging()
+    seed_everything(42)
+
     wandb.login()
 
     # Training Hyperparameters
@@ -114,6 +119,7 @@ if __name__ == "__main__":
     parser.add_argument("--output-path", default="runs", type=str, help="Path to save the model")
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
     parser.add_argument("--lr", default=1e-5, type=float, help="Learning rate")
+    parser.add_argument("--wd", default=1e-5, type=float, help="Weight decay")
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
     parser.add_argument("--transform", type=TransformType, choices=list(TransformType), required=True, help="The transform pipeline to be used for training")
