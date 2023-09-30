@@ -16,5 +16,7 @@ source activate medical-imaging
 
 srun python $HOME/PatchCamelyon-Medical-Imaging/train.py \
     --model vit-16-b \
-    --epochs 5 \
-    --transform "regular-shape-color"
+    --epochs 10 \
+    --transform "regular-shape-color" \
+    --wd 0.001 \
+    --lr-scheduler

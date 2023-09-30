@@ -8,6 +8,7 @@ import torch.optim as optim
 
 from tqdm import tqdm
 from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from .eval import evaluate_model
 
@@ -20,9 +21,13 @@ def train(
     loss_fn: nn.Module,
     device: torch.device,
     run_folder: str,
-    epochs: int = 10
+    epochs: int = 10,
+    use_lr_scheduler: bool = False
 ):
     best_val_accuracy = 0
+
+    if use_lr_scheduler:
+        scheduler = ReduceLROnPlateau(optimizer, "min", patience=2)
 
     for epoch in range(epochs):
         logging.info(f"starting epoch {epoch}")
@@ -67,6 +72,10 @@ def train(
             # Save the model to disk
             torch.save(model.state_dict(), os.path.join(run_folder, f"model_{epoch}.pt"))
             wandb.run.summary["best_model_path"] = os.path.join(run_folder, f"model_{epoch}.pt")
+
+        # Update the lr scheduler if needed
+        if use_lr_scheduler:
+            scheduler.step(val_loss)
 
         # save the optimizer to disk
         torch.save(optimizer.state_dict(), os.path.join(run_folder, f"optimizer.pt"))

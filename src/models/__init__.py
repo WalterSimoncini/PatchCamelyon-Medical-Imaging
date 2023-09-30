@@ -19,7 +19,7 @@ def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, in
         ModelType.RESNET_50: Resnet50Factory,
         ModelType.DENSENET_121: DenseNet121Factory,
         ModelType.VIT_16_B: ViT16BFactory,
-        ModelType.INCEPTION_V_3: InceptionV3Factory
+        ModelType.INCEPTION_V_3: InceptionV3Factory,
         ModelType.VIT_32_L: ViT32LFactory,
         ModelType.SWIN_V2_B: SwinV2BFactory
     }[type_]()

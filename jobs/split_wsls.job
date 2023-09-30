@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --ntasks=72
+#SBATCH --ntasks=18
 #SBATCH --partition=gpu
 #SBATCH --gpus-per-node=1
-#SBATCH --time=02:00:00
+#SBATCH --time=01:00:00
 
 # Load modules
 module purge
@@ -22,8 +22,8 @@ mkdir -p $SPLITTED_WSL_FOLDER
 
 # Execute the script for every TIFF file in the wsl folder in parallel. This can
 # be done for up to ntask images (GPU nodes only support up to 72 tasks)
-for fn in $(ls $WSL_FOLDER | head -n 72); do
-    srun --ntasks=1 --nodes=1 --cpus-per-task=1 $HOME/split_wsl.py --input-image $fn --output-folder $SPLITTED_WSL_FOLDER &
+for fn in $(ls $WSL_FOLDER | head -n 18); do
+    srun --ntasks=1 --nodes=1 --cpus-per-task=1 python $HOME/split_wsl.py --input-image $WSL_FOLDER/$fn --output-folder $SPLITTED_WSL_FOLDER &
 done
 
 wait
