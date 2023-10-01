@@ -1,6 +1,7 @@
 import torch
 import logging
 import argparse
+import pickle, os
 
 import torch.nn as nn
 
@@ -33,21 +34,14 @@ def main(args):
     if args.tta:
         test_transform = None
     else:
-        test_transform = get_transform(
-            type_=TransformType.EVALUATION,
-            input_size=input_size
-        )
+        test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
 
-    test_loader = get_data_loader(
-        split=args.split,
-        batch_size=args.batch_size,
-        transform=test_transform
-    )
+    test_loader = get_data_loader(split=args.split, batch_size=args.batch_size, transform=test_transform)
 
     model = model.to(device)
 
     if args.tta:
-        test_loss, test_accuracy, test_auc = evaluate_model_tta(
+        test_loss, test_accuracy, test_auc, prediction_list = evaluate_model_tta(
             model=model,
             test_loader=test_loader,
             loss_fn=loss_fn,
@@ -55,18 +49,25 @@ def main(args):
             transform=get_transform(type_=args.tta_transform, input_size=input_size),
             default_transform=get_transform(type_=TransformType.EVALUATION, input_size=input_size),
             n_samples=args.tta_samples,
-            original_image_weight=args.tta_original_weight
+            original_image_weight=args.tta_original_weight,
         )
     else:
-        test_loss, test_accuracy, test_auc = evaluate_model(
-            model=model,
-            test_loader=test_loader,
-            loss_fn=loss_fn,
-            device=device
-        )
+        test_loss, test_accuracy, test_auc, prediction_list = evaluate_model(model=model, test_loader=test_loader, loss_fn=loss_fn, device=device)
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
+
+    # Save the predictions to a new file
+    os.makedirs(args.save_predictions_path, exist_ok=True)
+    c = 0
+    f = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
+    if os.file.exists(f):
+        while os.file.exists(f) and c < 1000:
+            c += 1
+            save_path = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
+
+    pickle.dump(prediction_list, open(save_path, "wb"))
+    logging.info(f"saved predictions to {save_path}")
 
 
 if __name__ == "__main__":
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     parser.add_argument("--tta-samples", type=int, default=5, help="The number of TTA samples to be used")
     parser.add_argument("--tta-original-weight", type=float, default=None, help="The weight [0, 1] given to the original image for weighted TTA. If not specified all images are weighted equally")
     parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), default=PatchCamelyonSplit.TEST, help="The dataset split to test on")
-
+    parser.add_argument("--save-predictions-path", default="predictions", help="Save the predictions to this folder - needed for test set ensembling")
     args = parser.parse_args()
 
     main(args)
