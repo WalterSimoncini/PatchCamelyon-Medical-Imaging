@@ -61,13 +61,13 @@ def main(args):
     os.makedirs(args.save_predictions_path, exist_ok=True)
     c = 0
     f = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
-    if os.file.exists(f):
-        while os.file.exists(f) and c < 1000:
+    if os.path.isfile(f) :
+        while os.path.isfile(f) and c < 1000:
             c += 1
-            save_path = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
+            f = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
 
-    pickle.dump(prediction_list, open(save_path, "wb"))
-    logging.info(f"saved predictions to {save_path}")
+    pickle.dump(prediction_list, open(f, "wb"))
+    logging.info(f"saved predictions to {f}")
 
 
 if __name__ == "__main__":

@@ -24,5 +24,5 @@ class TransformType(Enum):
 
 
 class EnsembleType(Enum):
-    MAJORITY_VOTE = "majority_vote"
+    MAJORITY = "majority"
     AVERAGE = "average"
