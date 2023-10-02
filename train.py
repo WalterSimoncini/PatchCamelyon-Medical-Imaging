@@ -18,6 +18,7 @@ from src.transforms import get_transform
 
 from src.utils.train import train
 from src.utils.eval import evaluate_model
+from src.utils.seed import seed_everything
 from src.utils.logging import configure_logging
 
 
@@ -32,7 +33,7 @@ def main(args):
 
     loss_fn = nn.CrossEntropyLoss()
     model, input_size = get_model(type_=args.model)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
     train_transform = get_transform(type_=args.transform, input_size=input_size)
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
@@ -70,6 +71,8 @@ def main(args):
         data_key=args.data_key
     )
 
+    logging.info(f"training model with weight decay of {args.wd}")
+
     train(
         model=model,
         train_loader=train_loader,
@@ -78,7 +81,8 @@ def main(args):
         loss_fn=loss_fn,
         run_folder=run_folder,
         epochs=args.epochs,
-        device=device
+        device=device,
+        use_lr_scheduler=args.lr_scheduler
     )
 
     _, test_accuracy, _ = evaluate_model(
@@ -130,20 +134,25 @@ def get_data_loaders(
 
 if __name__ == "__main__":
     configure_logging()
+
     wandb.login()
 
     # Training Hyperparameters
     parser = argparse.ArgumentParser(description="Patch Camelyon Training")
 
     parser.add_argument("--output-path", default="runs", type=str, help="Path to save the model")
+    parser.add_argument("--seed", default=42, type=int, help="The seed for random number generators")
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
     parser.add_argument("--lr", default=1e-5, type=float, help="Learning rate")
+    parser.add_argument("--wd", default=0, type=float, help="Weight decay")
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
     parser.add_argument("--transform", type=TransformType, choices=list(TransformType), required=True, help="The transform pipeline to be used for training")
     parser.add_argument("--data-dir", default="data", type=str, help="The directory containing the Patch Camelyon data")
     parser.add_argument("--data-key", default="x", type=str, help="The dataset key which contains the image data. Regular datasets have a single key 'x' and stain-normalized ones have ['norm', 'E', 'H']")
+    parser.add_argument("--lr-scheduler", action=argparse.BooleanOptionalAction, help="Whether to use a learning rate scheduler")
 
     args = parser.parse_args()
 
+    seed_everything(args.seed)
     main(args)

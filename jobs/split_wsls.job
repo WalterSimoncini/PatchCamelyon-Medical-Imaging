@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=18
+#SBATCH --partition=gpu
+#SBATCH --gpus-per-node=1
+#SBATCH --time=01:00:00
+
+# Load modules
+module purge
+
+module load 2022
+module load Anaconda3/2022.05
+
+source activate medical-imaging
+
+# Schedule jobs
+WSL_FOLDER=/scratch-shared/$USER/wsl
+SPLITTED_WSL_FOLDER=/scratch-shared/$USER/extracted_wsl
+
+# Create the output directory if it does not exist
+mkdir -p $SPLITTED_WSL_FOLDER
+
+# Execute the script for every TIFF file in the wsl folder in parallel. This can
+# be done for up to ntask images (GPU nodes only support up to 72 tasks)
+for fn in $(ls $WSL_FOLDER | head -n 18); do
+    srun --ntasks=1 --nodes=1 --cpus-per-task=1 python $HOME/split_wsl.py --input-image $WSL_FOLDER/$fn --output-folder $SPLITTED_WSL_FOLDER &
+done
+
+wait

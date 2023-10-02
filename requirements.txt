@@ -11,3 +11,5 @@ tifffile>=2023.9.18
 opencv-python>=4.8.0.76
 datasets>=2.14.5
 accelerate>=0.23.0
+boto3>=1.28.57
+imagecodecs>=2023.9.18
