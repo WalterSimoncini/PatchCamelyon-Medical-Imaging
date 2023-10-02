@@ -58,6 +58,15 @@ def main(args):
 
     norm_dataset = output_file.create_dataset("norm", max_dataset_shape, dtype="uint8", maxshape=max_dataset_shape)
 
+    if args.include_original:
+        # If this argument was specified also create a dataset with regular images
+        regular_image_dataset = output_file.create_dataset(
+            "x",
+            max_dataset_shape,
+            dtype="uint8",
+            maxshape=max_dataset_shape
+        )
+
     # As some samples may be skipped due to failures we
     # need to keep track of the last index we wrote to
     current_cell_index = 0
@@ -81,9 +90,21 @@ def main(args):
             norm_dataset[current_cell_index, :, :, :] = norm.numpy()
             y_dataset[current_cell_index] = target
 
+            if args.include_original:
+                regular_image_dataset[current_cell_index, :, :, :] = image
+
             current_cell_index += 1
         except Exception as ex:
             normalization_errors += 1
+
+            if args.include_original:
+                # If the normalization failed add the regular image
+                # anyway and leave the others blank
+                regular_image_dataset[current_cell_index, :, :, :] = image
+                y_dataset[current_cell_index] = target
+
+                current_cell_index += 1
+
             logging.warning(f"could not process sample {i}: {ex}")
 
     # Resize datasets to remove empty cells
@@ -105,5 +126,6 @@ if __name__ == "__main__":
 
     parser.add_argument("--output-folder", default="normalized_data", type=str, help="Path to save the dataset to")
     parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), required=True, help="The dataset split to test on")
+    parser.add_argument("--include-original", action=argparse.BooleanOptionalAction, help="Whether to include the original images as well in the output file and leave normalized ones blank if the process fails for an image")
 
     main(parser.parse_args())

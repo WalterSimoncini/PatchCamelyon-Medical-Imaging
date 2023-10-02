@@ -22,16 +22,18 @@ def get_data_loader(
         data_key=data_key
     )
 
-    num_workers = 2
-
-    if platform.system() == "Darwin":
-        # Workaround for macos
-        num_workers = 0
-
     return DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=num_workers,
+        num_workers=get_num_workers(),
         pin_memory=True
     )
+
+
+def get_num_workers() -> int:
+    if platform.system() == "Darwin":
+        # Workaround for macos
+        return 0
+
+    return 2
