@@ -1,1 +1,2 @@
 from .pcam import PatchCamelyonDataset
+from .pcam_stain import PatchCamelyonStainNormalizedDataset
