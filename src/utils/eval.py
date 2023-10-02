@@ -70,6 +70,8 @@ def evaluate_model_stain_ensemble(
     with torch.no_grad():
         for i, (images, norms, Hs, Es, targets) in enumerate(tqdm(test_loader)):
             targets = targets.to(device)
+            # FIXME: We can probably remove the Es as they are not
+            # being actively used
             Hs, Es = Hs.to(device), Es.to(device)
             images, norms = images.to(device), norms.to(device)
 
@@ -81,9 +83,7 @@ def evaluate_model_stain_ensemble(
                 test_loss += loss_fn(preds, targets)
                 preds = softmax(preds, dim=1)
             else:
-                # Run a forward pass with each of the models
-                # image_model(images).squeeze()
-                # E_model(Es).squeeze()
+                # Run a forward pass with all models (excluding the E one)
                 preds = torch.cat([
                     norm_model(norms),
                     H_model(Hs),

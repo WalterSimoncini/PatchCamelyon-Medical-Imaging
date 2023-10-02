@@ -40,7 +40,8 @@ class PatchCamelyonStainNormalizedDataset(Dataset):
             norm = self.transform(norm)
 
         # Norm, H, E may be zero-valued tensors if it
-        # was not possible to normalize them
+        # was not possible to normalize them during
+        # preprocessing
         return image, norm, H, E, target
 
     def __preprocess_sample(self, sample: np.ndarray) -> torch.tensor:

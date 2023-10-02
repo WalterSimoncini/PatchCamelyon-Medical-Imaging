@@ -122,7 +122,7 @@ def main(args):
 if __name__ == "__main__":
     configure_logging()
 
-    parser = argparse.ArgumentParser(description="Patch Camelyon Training")
+    parser = argparse.ArgumentParser(description="Patch Camelyon Stain Normalization")
 
     parser.add_argument("--output-folder", default="normalized_data", type=str, help="Path to save the dataset to")
     parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), required=True, help="The dataset split to test on")

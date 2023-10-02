@@ -52,7 +52,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Patch Camelyon Training")
+    parser = argparse.ArgumentParser(description="Patch Camelyon Stain Normalization Splitter")
 
     parser.add_argument("--dataset", required=True, help="Path to the stain normalized dataset")
     parser.add_argument("--out-folder", required=True, help="Path where the output datasets should be saved to")
