@@ -57,17 +57,7 @@ def main(args):
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
 
-    # Save the predictions to a new file
-    os.makedirs(args.save_predictions_path, exist_ok=True)
-    c = 0
-    f = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
-    if os.path.isfile(f) :
-        while os.path.isfile(f) and c < 1000:
-            c += 1
-            f = os.path.join(args.save_predictions_path, f"test_predictions_{c}.pkl")
-
-    pickle.dump(prediction_list, open(f, "wb"))
-    logging.info(f"saved predictions to {f}")
+    return prediction_list
 
 
 if __name__ == "__main__":
@@ -83,7 +73,7 @@ if __name__ == "__main__":
     parser.add_argument("--tta-samples", type=int, default=5, help="The number of TTA samples to be used")
     parser.add_argument("--tta-original-weight", type=float, default=None, help="The weight [0, 1] given to the original image for weighted TTA. If not specified all images are weighted equally")
     parser.add_argument("--split", type=PatchCamelyonSplit, choices=list(PatchCamelyonSplit), default=PatchCamelyonSplit.TEST, help="The dataset split to test on")
-    parser.add_argument("--save-predictions-path", default="predictions", help="Save the predictions to this folder - needed for test set ensembling")
+
     args = parser.parse_args()
 
     main(args)
