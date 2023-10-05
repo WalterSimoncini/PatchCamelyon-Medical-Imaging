@@ -15,12 +15,7 @@ module load Anaconda3/2022.05
 source activate medical-imaging
 
 # Experiment Config Example
-srun python $HOME/PatchCamelyon-Medical-Imaging/test_ensembling.py \
-    --model-path $HOME/PatchCamelyon-Medical-Imaging/runs/vit16b-regular/model_0.pt $HOME/PatchCamelyon-Medical-Imaging/runs/inception/model_0.pt \
-    --batch-size 64 64 \
-    --model vit-16-b inception3 \
-    --tta False True \
-    --tta-transform base evaluation \
-    --tta-samples 5 5 \
-    --tta-original-weight 0 1 \
-    --split test test \
+srun python $HOME/PatchCamelyon-Medical-Imaging/eval_models_ensemble.py \
+    --ensemble-strategy average \
+    --ensemble-config configs/ensemble.json \
+    --split test

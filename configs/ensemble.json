@@ -1,0 +1,22 @@
+[
+    {
+        "model_path": "models/resnet50-flip-rotate-aug.pt",
+        "batch_size": 64,
+        "model": "resnet50",
+        "tta": false,
+        "tta_trasform": "regular-shape-color",
+        "tta_samples": 5,
+        "data_dir": "data",
+        "data_key": "x"
+    },
+    {
+        "model_path": "models/resnet50-sr-color-flip-rotate.pt",
+        "batch_size": 64,
+        "model": "resnet50",
+        "tta": false,
+        "tta_trasform": "regular-shape-color",
+        "tta_samples": 5,
+        "data_dir": "data",
+        "data_key": "x"
+    }
+]
