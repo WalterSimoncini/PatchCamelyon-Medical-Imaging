@@ -7,7 +7,7 @@ import numpy as np
 from sklearn import metrics
 
 from src.utils.logging import configure_logging
-from src.enums import EnsembleType, PatchCamelyonSplit, ModelType, TransformType
+from src.enums import EnsembleStrategy, PatchCamelyonSplit, ModelType, TransformType
 from src.datasets.loaders import get_data_loader
 
 from eval import main as eval
@@ -52,12 +52,12 @@ def main(args):
     systems = np.array(model_predictions)  # shape: systems, test samples
 
     # get predictions as array
-    if args.ensemble == EnsembleType.MAJORITY:
+    if args.ensemble == EnsembleStrategy.MAJORITY:
         votes_for_true = (systems >= 0.5).sum(axis=0)
         # in case of a tie, we predict 0
         predictions = (votes_for_true >= len(systems) // 2 + 1).astype(np.int32)
 
-    elif args.ensemble == EnsembleType.AVERAGE:
+    elif args.ensemble == EnsembleStrategy.AVERAGE:
         predictions = np.mean(systems, axis=0)
         predictions = (predictions >= 0.5).astype(np.int32)
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     configure_logging()
     parser = argparse.ArgumentParser(description="Ensemble Evaluation")
 
-    parser.add_argument("--ensemble", type=EnsembleType, choices=list(EnsembleType), required=True, help="The type of ensembling to use")
+    parser.add_argument("--ensemble", type=EnsembleStrategy, choices=list(EnsembleStrategy), required=True, help="The type of ensembling to use")
     parser.add_argument("--model-path", nargs="+", type=str, required=True, help="Paths to the model weights")
     parser.add_argument("--batch-size", nargs="+", type=int, required=True, help="Batch size for training and validation")  # default=64
     parser.add_argument("--model", nargs="+", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")

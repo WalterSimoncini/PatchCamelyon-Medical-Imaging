@@ -1,7 +1,5 @@
-import torch
 import logging
 import argparse
-import pickle, os
 
 import torch.nn as nn
 
@@ -33,7 +31,10 @@ def main(args):
     if args.tta:
         test_transform = None
     else:
-        test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
+        test_transform = get_transform(
+            type_=TransformType.EVALUATION,
+            input_size=input_size
+        )
 
     test_loader = get_data_loader(
         split=args.split,
@@ -54,15 +55,18 @@ def main(args):
             transform=get_transform(type_=args.tta_transform, input_size=input_size),
             default_transform=get_transform(type_=TransformType.EVALUATION, input_size=input_size),
             n_samples=args.tta_samples,
-            original_image_weight=args.tta_original_weight,
+            original_image_weight=args.tta_original_weight
         )
     else:
-        test_loss, test_accuracy, test_auc, prediction_list = evaluate_model(model=model, test_loader=test_loader, loss_fn=loss_fn, device=device)
+        test_loss, test_accuracy, test_auc, prediction_list = evaluate_model(
+            model=model,
+            test_loader=test_loader,
+            loss_fn=loss_fn,
+            device=device
+        )
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
-
-    return prediction_list
 
 
 if __name__ == "__main__":

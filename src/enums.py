@@ -23,6 +23,6 @@ class TransformType(Enum):
     REGULAR_SHAPE_COLOR = "regular-shape-color"
 
 
-class EnsembleType(Enum):
+class EnsembleStrategy(Enum):
     MAJORITY = "majority"
     AVERAGE = "average"

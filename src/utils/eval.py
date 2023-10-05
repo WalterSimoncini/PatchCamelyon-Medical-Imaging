@@ -9,7 +9,12 @@ from torch.utils.data import DataLoader
 from torch.nn.functional import softmax
 
 
-def evaluate_model(model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module, device: torch.device):
+def evaluate_model(
+    model: nn.Module,
+    test_loader: DataLoader,
+    loss_fn: nn.Module,
+    device: torch.device
+):
     model.eval()
 
     ground_truth = np.zeros(len(test_loader.dataset))
@@ -26,8 +31,8 @@ def evaluate_model(model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module
             test_loss += loss_fn(preds, targets)
 
             # Update the arrays used to compute the ROC and AUC
-            ground_truth[(i * batch_size) : ((i + 1) * batch_size)] = targets.cpu().numpy()
-            true_class_probs[(i * batch_size) : ((i + 1) * batch_size)] = softmax(preds, dim=1)[:, 1].cpu().numpy()
+            ground_truth[(i * batch_size):((i + 1) * batch_size)] = targets.cpu().numpy()
+            true_class_probs[(i * batch_size):((i + 1) * batch_size)] = softmax(preds, dim=1)[:, 1].cpu().numpy()
 
             batches_n += 1
             preds = preds.argmax(dim=1)
@@ -36,7 +41,11 @@ def evaluate_model(model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module
     test_loss /= batches_n
     accuracy = correct_preds / len(test_loader.dataset)
 
-    fpr, tpr, _ = metrics.roc_curve(ground_truth, true_class_probs, pos_label=1)
+    fpr, tpr, _ = metrics.roc_curve(
+        ground_truth,
+        true_class_probs,
+        pos_label=1
+    )
 
     return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
@@ -102,23 +111,30 @@ def evaluate_model_stain_ensemble(
         pos_label=1
     )
 
-    return test_loss, accuracy, metrics.auc(fpr, tpr)
+    return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
 
 def evaluate_model_tta(
-    model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module, device: torch.device, transform: nn.Module, default_transform: nn.Module, n_samples: int = 5, original_image_weight: float = None
+    model: nn.Module,
+    test_loader: DataLoader,
+    loss_fn: nn.Module,
+    device: torch.device,
+    transform: nn.Module,
+    default_transform: nn.Module,
+    n_samples: int = 5,
+    original_image_weight: float = None
 ):
     """
-    Evaluates the model using TTA (Test-Time Augmentation).
+        Evaluates the model using TTA (Test-Time Augmentation).
 
-    For each image this evaluator generates n_samples using the
-    given transform and averages the model prediction over them
+        For each image this evaluator generates n_samples using the
+        given transform and averages the model prediction over them
 
-    TODO: allow the user to specify multiple transformation
+        TODO: allow the user to specify multiple transformation
 
-    :param transform: the transform used for TTA
-    :param default_transform: the default transformation applied to
-                              test samples if TTA was not to be used
+        :param transform: the transform used for TTA
+        :param default_transform: the default transformation applied to
+                                test samples if TTA was not to be used
     """
     batch_size = test_loader.batch_size
 
@@ -137,7 +153,10 @@ def evaluate_model_tta(
 
             # Generate n transformations of the given image, plus the
             # original image with the default transformation
-            transformed_images = torch.cat([default_transform(image)] + [transform(image) for _ in range(n_samples)], dim=0).to(device)
+            transformed_images = torch.cat(
+                [default_transform(image)] + [transform(image) for _ in range(n_samples)],
+                dim=0
+            ).to(device)
 
             # Predict the labels for all transformed
             # images and compute the mean prediction
@@ -172,6 +191,10 @@ def evaluate_model_tta(
     test_loss /= len(test_loader.dataset)
     accuracy = correct_preds / len(test_loader.dataset)
 
-    fpr, tpr, _ = metrics.roc_curve(ground_truth, true_class_probs, pos_label=1)
+    fpr, tpr, _ = metrics.roc_curve(
+        ground_truth,
+        true_class_probs,
+        pos_label=1
+    )
 
     return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs

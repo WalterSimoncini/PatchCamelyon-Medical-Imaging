@@ -45,7 +45,7 @@ def main(args):
         num_workers=get_num_workers()
     )
 
-    test_loss, test_accuracy, test_auc = evaluate_model_stain_ensemble(
+    test_loss, test_accuracy, test_auc, _ = evaluate_model_stain_ensemble(
         image_model=image_model,
         norm_model=norm_model,
         H_model=H_model,
