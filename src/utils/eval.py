@@ -8,6 +8,8 @@ from sklearn import metrics
 from torch.utils.data import DataLoader
 from torch.nn.functional import softmax
 
+from src.enums import EnsembleStrategy
+
 
 def evaluate_model(
     model: nn.Module,
@@ -56,7 +58,8 @@ def evaluate_model_stain_ensemble(
     H_model: nn.Module,
     test_loader: DataLoader,
     loss_fn: nn.Module,
-    device: torch.device
+    device: torch.device,
+    strategy: EnsembleStrategy = EnsembleStrategy.AVERAGE
 ):
     # Set models in evaluation mode
     for model in [image_model, norm_model, H_model]:
@@ -89,8 +92,17 @@ def evaluate_model_stain_ensemble(
                     image_model(images)
                 ], dim=0)
 
-                # Average out the predictions
-                preds = softmax(preds, dim=1).mean(dim=0).unsqueeze(dim=0)
+                if strategy == EnsembleStrategy.AVERAGE:
+                    # Average out the predictions
+                    preds = softmax(preds, dim=1).mean(dim=0).unsqueeze(dim=0)
+                elif strategy == EnsembleStrategy.MAJORITY:
+                    # Take the argmaxes, count the number of positive predictions
+                    # and create a tensor [1 - pos_preds/3, pos_preds/3]
+                    pos_prob = preds.argmax(dim=1).sum() / 3
+                    preds = torch.tensor([1 - pos_prob, pos_prob])
+                else:
+                    raise ValueError(f"Ensembling strategy {strategy} is not supported")
+
                 test_loss += loss_fn(preds, targets)
 
             test_loss += loss_fn(preds, targets)

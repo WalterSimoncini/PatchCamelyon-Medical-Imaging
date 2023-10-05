@@ -8,9 +8,10 @@ from argparse import Namespace
 
 from src.utils.logging import configure_logging
 from src.datasets.loaders import get_data_loader
-from src.enums import EnsembleStrategy, PatchCamelyonSplit, ModelType
+from src.enums import EnsembleStrategy, PatchCamelyonSplit, ModelType, TestType
 
 from eval import main as evaluate_model
+from eval_stain import main as evaluate_stain_ensemble
 
 
 def main(args):
@@ -28,9 +29,18 @@ def main(args):
             "model": ModelType(config["model"])
         }
 
-        positive_probs.append(torch.tensor(
-            evaluate_model(args=Namespace(**config))
-        ).unsqueeze(dim=0))
+        test_type = TestType(config["test_type"])
+
+        if test_type == TestType.REGULAR:
+            positive_probs.append(torch.tensor(
+                evaluate_model(args=Namespace(**config))
+            ).unsqueeze(dim=0))
+        elif test_type == TestType.STAIN_ENSEMBLE:
+            positive_probs.append(torch.tensor(
+                evaluate_stain_ensemble(args=Namespace(**config))
+            ).unsqueeze(dim=0))
+        else:
+            raise ValueError(f"Invalid test type {test_type}")
 
     # systems x targets tensor with positive probabilities 
     positive_probs = torch.cat(positive_probs, dim=0)

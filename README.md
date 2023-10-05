@@ -244,7 +244,4 @@ You will find the fine-tuned checkpoints in `/scratch-shared/$USER/vit-models`
 - Ensemble different models
   - Including what Jonas said
 - Paper
-- ViT fine-tuning
-- Maybe combine the stain ensemble with TTA?
-- Add support for majority voting for the stain ensemble?
 - Pack the new (better) models

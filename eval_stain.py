@@ -7,11 +7,11 @@ from torch.utils.data import DataLoader
 from src.models import get_model
 from src.utils.misc import get_device
 from src.transforms import get_transform
-from src.enums import ModelType, TransformType
 from src.utils.logging import configure_logging
 from src.datasets.loaders import get_num_workers
 from src.utils.eval import evaluate_model_stain_ensemble
 from src.datasets import PatchCamelyonStainNormalizedDataset
+from src.enums import ModelType, TransformType, EnsembleStrategy
 
 
 def main(args):
@@ -49,7 +49,8 @@ def main(args):
         H_model=H_model,
         test_loader=test_loader,
         loss_fn=loss_fn,
-        device=device
+        device=device,
+        strategy=args.ensemble_strategy
     )
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
@@ -62,6 +63,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Patch Camelyon Evaluation (Stain Normalized Ensemble)")
 
     parser.add_argument("--dataset-path", type=str, help="Path to the test dataset", required=True)
+    parser.add_argument("--ensemble-strategy", type=EnsembleStrategy, choices=list(EnsembleStrategy), required=True, help="The type of ensembling to use")
 
     parser.add_argument("--image-model", type=ModelType, choices=list(ModelType), required=True, help="The image model type")
     parser.add_argument("--image-model-path", type=str, help="Path to the (regular) model weights", required=True)

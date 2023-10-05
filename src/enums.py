@@ -26,3 +26,12 @@ class TransformType(Enum):
 class EnsembleStrategy(Enum):
     MAJORITY = "majority"
     AVERAGE = "average"
+
+
+class TestType(Enum):
+    """
+        Determines what kind of model is being tested, a regular model or
+        the ensemble that uses stain normalization
+    """
+    REGULAR = "regular"
+    STAIN_ENSEMBLE = "stain-ensemble"
