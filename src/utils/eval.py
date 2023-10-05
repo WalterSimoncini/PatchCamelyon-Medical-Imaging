@@ -54,13 +54,12 @@ def evaluate_model_stain_ensemble(
     image_model: nn.Module,
     norm_model: nn.Module,
     H_model: nn.Module,
-    E_model: nn.Module,
     test_loader: DataLoader,
     loss_fn: nn.Module,
     device: torch.device
 ):
     # Set models in evaluation mode
-    for model in [image_model, norm_model, H_model, E_model]:
+    for model in [image_model, norm_model, H_model]:
         model.eval()
 
     test_loss, correct_preds = 0, 0
@@ -83,7 +82,7 @@ def evaluate_model_stain_ensemble(
                 test_loss += loss_fn(preds, targets)
                 preds = softmax(preds, dim=1)
             else:
-                # Run a forward pass with all models (excluding the E one)
+                # Run a forward pass with all models
                 preds = torch.cat([
                     norm_model(norms),
                     H_model(Hs),
@@ -161,7 +160,6 @@ def evaluate_model_tta(
             # Predict the labels for all transformed
             # images and compute the mean prediction
             preds = model(transformed_images)
-
             test_loss += loss_fn(preds, target.repeat(n_samples + 1))
             preds = softmax(preds, dim=1)
 

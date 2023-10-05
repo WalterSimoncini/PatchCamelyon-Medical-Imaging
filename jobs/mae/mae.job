@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=18
 #SBATCH --gpus=1
 #SBATCH --partition=gpu
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 
 # Execute program located in $HOME
 module purge
@@ -14,12 +14,13 @@ module load Anaconda3/2022.05
 
 source activate mae
 
-srun python $HOME/run_mae.py \
+srun python $HOME/mae_pretraining.py \
     --model_name_or_path facebook/vit-mae-base \
-    --dataset_name imagefolder \
-    --train_dir /scratch-shared/$USER/extracted_wsl/ \
-    --output_dir $HOME/mae-outputs/ \
+    --train_dir /scratch-shared/$USER/dataset \
+    --cache_dir /scratch-shared/$USER/cache \
+    --output_dir /scratch-shared/$USER/mae-models \
     --remove_unused_columns False \
     --label_names pixel_values \
+    --save_steps 10000 \
     --do_train \
     --do_eval

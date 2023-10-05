@@ -22,13 +22,11 @@ def main(args):
     image_model, input_size = get_model(type_=args.image_model, weights_path=args.image_model_path)
     norm_model, _ = get_model(type_=args.norm_model, weights_path=args.norm_model_path)
     H_model, _ = get_model(type_=args.H_model, weights_path=args.H_model_path)
-    E_model, _ = get_model(type_=args.E_model, weights_path=args.E_model_path)
 
     # Move the models to the appropriate device
     norm_model = norm_model.to(device)
     image_model = image_model.to(device)
     H_model = H_model.to(device)
-    E_model = E_model.to(device)
 
     dataset = PatchCamelyonStainNormalizedDataset(
         data_path=args.dataset_path,
@@ -49,7 +47,6 @@ def main(args):
         image_model=image_model,
         norm_model=norm_model,
         H_model=H_model,
-        E_model=E_model,
         test_loader=test_loader,
         loss_fn=loss_fn,
         device=device
@@ -74,8 +71,5 @@ if __name__ == "__main__":
 
     parser.add_argument("--H-model", type=ModelType, choices=list(ModelType), required=True, help="The H model type")
     parser.add_argument("--H-model-path", type=str, help="Path to the (H) model weights", required=True)
-
-    parser.add_argument("--E-model", type=ModelType, choices=list(ModelType), required=True, help="The E model type")
-    parser.add_argument("--E-model-path", type=str, help="Path to the (E) model weights", required=True)
 
     main(parser.parse_args())

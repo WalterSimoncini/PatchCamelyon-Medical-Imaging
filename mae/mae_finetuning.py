@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 
 from typing import List
+from torchvision import transforms
 from datasets import load_from_disk, load_metric
 from transformers import Trainer, TrainingArguments
 from transformers import ViTImageProcessor, ViTForImageClassification
@@ -18,7 +19,6 @@ def main(args):
 
     # Load the dataset
     dataset = load_from_disk(args.dataset_path)
-    dataset = dataset.with_transform(get_transform(processor=processor))
 
     # Load the model
     model = ViTForImageClassification.from_pretrained(
@@ -40,9 +40,17 @@ def main(args):
         save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
-        report_to="wandb",
+        report_to="tensorboard",
         load_best_model_at_end=True
     )
+
+    train_dataset = dataset["train"]
+    train_dataset.set_transform(
+        get_transform(processor=processor, include_augmentations=True)
+    )
+
+    eval_dataset = dataset["valid"]
+    eval_dataset.set_transform(get_transform(processor=processor))
 
     trainer = Trainer(
         model=model,
@@ -78,9 +86,22 @@ def main(args):
     trainer.save_metrics("test", test_metrics)
 
 
-def get_transform(processor: ViTImageProcessor):
+def get_transform(processor: ViTImageProcessor, include_augmentations: bool = False):
+    # No resizing as that is done by the processor itself
+    augmentation_transform = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0),
+        transforms.RandomRotation(degrees=360)
+    ])
+
     def transform(batch: dict):
-        inputs = processor([x for x in batch["image"]], return_tensors="pt")
+        if include_augmentations:
+            images = [augmentation_transform(x) for x in batch["image"]]
+        else:
+            images = [x for x in batch["image"]]
+
+        inputs = processor(images, return_tensors="pt")
         inputs["label"] = batch["label"]
 
         return inputs
@@ -95,10 +116,10 @@ def collate_fn(batch: List[dict]):
   }
 
 
-def get_metrics_func(pred):
+def get_metrics_func():
     accuracy_metric = load_metric("accuracy")
 
-    def metrics_func():
+    def metrics_func(pred):
         return accuracy_metric.compute(
             predictions=np.argmax(pred.predictions, axis=1),
             references=pred.label_ids
@@ -114,7 +135,7 @@ if __name__ == "__main__":
     parser.add_argument("--model-path", type=str, help="Path to the MAE checkpoint")
     parser.add_argument("--output-dir", type=str, help="Path to where models should be stored")
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
-    parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
+    parser.add_argument("--epochs", default=5, type=int, help="Number of epochs to train for")
     parser.add_argument("--save-steps", default=500, type=int, help="Save the model every n steps")
     parser.add_argument("--eval-steps", default=500, type=int, help="Evaluate the model every n steps")
     parser.add_argument("--lr", default=2e-4, type=float, help="Learning rate")

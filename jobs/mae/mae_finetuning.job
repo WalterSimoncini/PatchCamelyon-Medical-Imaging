@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --partition=gpu
+#SBATCH --time=05:00:00
+
+# Execute program located in $HOME
+module purge
+
+module load 2022
+module load Anaconda3/2022.05
+
+source activate mae
+
+pip install scikit-learn
+pip install tensorboard
+
+srun python $HOME/mae_finetuning.py \
+    --model-path $HOME/mae-res/checkpoint-600000 \
+    --dataset-path $HOME/hf \
+    --output-dir /scratch-shared/$USER/vit-models
