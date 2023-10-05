@@ -6,9 +6,16 @@ from torch.utils.data import Dataset
 
 
 class PatchCamelyonDataset(Dataset):
-    def __init__(self, data_path: str, targets_path: str, transform=None) -> None:
-        self.data = h5py.File(data_path)["x"]
-        self.targets = h5py.File(targets_path)["y"]
+    def __init__(
+        self,
+        data_path: str,
+        targets_path: str,
+        transform=None,
+        data_key: str = "x",
+        targets_key: str = "y"
+    ) -> None:
+        self.data = h5py.File(data_path)[data_key]
+        self.targets = h5py.File(targets_path)[targets_key]
         self.transform = transform
 
     def __len__(self) -> int:

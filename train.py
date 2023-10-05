@@ -66,7 +66,9 @@ def main(args):
     train_loader, val_loader, test_loader = get_data_loaders(
         batch_size=args.batch_size,
         train_transform=train_transform,
-        test_transform=test_transform
+        test_transform=test_transform,
+        data_dir=args.data_dir,
+        data_key=args.data_key
     )
 
     logging.info(f"training model with weight decay of {args.wd}")
@@ -99,11 +101,33 @@ def main(args):
 def get_data_loaders(
     train_transform: nn.Module,
     test_transform: nn.Module,
-    batch_size: int = 64
+    batch_size: int = 64,
+    data_dir: str = "data",
+    data_key: str = "x"
 ):
-    train_loader = get_data_loader(split=PatchCamelyonSplit.TRAIN, batch_size=batch_size, transform=train_transform)
-    val_loader = get_data_loader(split=PatchCamelyonSplit.VALIDATION, batch_size=batch_size, transform=test_transform)
-    test_loader = get_data_loader(split=PatchCamelyonSplit.TEST, batch_size=batch_size, transform=test_transform)
+    train_loader = get_data_loader(
+        split=PatchCamelyonSplit.TRAIN,
+        batch_size=batch_size,
+        transform=train_transform,
+        data_dir=data_dir,
+        data_key=data_key
+    )
+
+    val_loader = get_data_loader(
+        split=PatchCamelyonSplit.VALIDATION,
+        batch_size=batch_size,
+        transform=test_transform,
+        data_dir=data_dir,
+        data_key=data_key
+    )
+
+    test_loader = get_data_loader(
+        split=PatchCamelyonSplit.TEST,
+        batch_size=batch_size,
+        transform=test_transform,
+        data_dir=data_dir,
+        data_key=data_key
+    )
 
     return train_loader, val_loader, test_loader
 
@@ -124,6 +148,8 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
     parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to train/evaluate")
     parser.add_argument("--transform", type=TransformType, choices=list(TransformType), required=True, help="The transform pipeline to be used for training")
+    parser.add_argument("--data-dir", default="data", type=str, help="The directory containing the Patch Camelyon data")
+    parser.add_argument("--data-key", default="x", type=str, help="The dataset key which contains the image data. Regular datasets have a single key 'x' and stain-normalized ones have ['norm', 'E', 'H']")
     parser.add_argument("--lr-scheduler", action=argparse.BooleanOptionalAction, help="Whether to use a learning rate scheduler")
 
     args = parser.parse_args()

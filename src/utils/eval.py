@@ -41,6 +41,70 @@ def evaluate_model(model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module
     return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
 
+def evaluate_model_stain_ensemble(
+    image_model: nn.Module,
+    norm_model: nn.Module,
+    H_model: nn.Module,
+    E_model: nn.Module,
+    test_loader: DataLoader,
+    loss_fn: nn.Module,
+    device: torch.device
+):
+    # Set models in evaluation mode
+    for model in [image_model, norm_model, H_model, E_model]:
+        model.eval()
+
+    test_loss, correct_preds = 0, 0
+    ground_truth = np.zeros(len(test_loader.dataset))
+    true_class_probs = np.zeros(len(test_loader.dataset))
+
+    with torch.no_grad():
+        for i, (images, norms, Hs, Es, targets) in enumerate(tqdm(test_loader)):
+            targets = targets.to(device)
+            # FIXME: We can probably remove the Es as they are not
+            # being actively used
+            Hs, Es = Hs.to(device), Es.to(device)
+            images, norms = images.to(device), norms.to(device)
+
+            if norms.sum() == 0:
+                # If the normalization failed the norm, H and E
+                # images will be zero-valued tensors, thus we
+                # fall back to using only the original image
+                preds = image_model(images)
+                test_loss += loss_fn(preds, targets)
+                preds = softmax(preds, dim=1)
+            else:
+                # Run a forward pass with all models (excluding the E one)
+                preds = torch.cat([
+                    norm_model(norms),
+                    H_model(Hs),
+                    image_model(images)
+                ], dim=0)
+
+                # Average out the predictions
+                preds = softmax(preds, dim=1).mean(dim=0).unsqueeze(dim=0)
+                test_loss += loss_fn(preds, targets)
+
+            test_loss += loss_fn(preds, targets)
+
+            ground_truth[i] = targets.cpu()[0].item()
+            true_class_probs[i] = preds[:, 1].cpu().item()
+
+            preds = preds.argmax(dim=1)
+            correct_preds += (preds == targets).sum()
+
+    test_loss /= len(test_loader.dataset)
+    accuracy = correct_preds / len(test_loader.dataset)
+
+    fpr, tpr, _ = metrics.roc_curve(
+        ground_truth,
+        true_class_probs,
+        pos_label=1
+    )
+
+    return test_loss, accuracy, metrics.auc(fpr, tpr)
+
+
 def evaluate_model_tta(
     model: nn.Module, test_loader: DataLoader, loss_fn: nn.Module, device: torch.device, transform: nn.Module, default_transform: nn.Module, n_samples: int = 5, original_image_weight: float = None
 ):
@@ -63,10 +127,9 @@ def evaluate_model_tta(
 
     model.eval()
 
+    test_loss, correct_preds = 0, 0
     ground_truth = np.zeros(len(test_loader.dataset))
     true_class_probs = np.zeros(len(test_loader.dataset))
-
-    test_loss, correct_preds = 0, 0
 
     with torch.no_grad():
         for i, (image, target) in enumerate(tqdm(test_loader)):

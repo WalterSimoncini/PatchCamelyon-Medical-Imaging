@@ -1,0 +1,42 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --partition=gpu
+#SBATCH --time=02:00:00
+
+# Load modules
+module purge
+
+module load 2022
+module load Anaconda3/2022.05
+
+source activate medical-imaging
+
+# Experiment config
+H_MODEL_TYPE="vit-16-b"
+E_MODEL_TYPE="vit-16-b"
+NORM_MODEL_TYPE="vit-16-b"
+IMAGE_MODEL_TYPE="swin-v2-b"
+
+H_MODEL_PATH="$HOME/stain-models/H/model_3.pt"
+E_MODEL_PATH="$HOME/stain-models/E/model_1.pt"
+NORM_MODEL_PATH="$HOME/stain-models/norm/model_0.pt"
+# ViT 16/B
+# IMAGE_MODEL_PATH="$HOME/stain-models/regular/model_1.pt"
+# Swin v2 B
+IMAGE_MODEL_PATH="$HOME/models/swinv2b/model_1.pt"
+
+# Evaluate the models
+echo "Stain Ensemble Evaluation"
+srun python $HOME/pcam-stain/eval_stain.py \
+    --image-model $IMAGE_MODEL_TYPE \
+    --image-model-path $IMAGE_MODEL_PATH \
+    --E-model $E_MODEL_TYPE \
+    --E-model-path $E_MODEL_PATH \
+    --H-model $H_MODEL_TYPE \
+    --H-model-path $H_MODEL_PATH \
+    --norm-model $NORM_MODEL_TYPE \
+    --norm-model-path $NORM_MODEL_PATH \
+    --dataset-path data/stain/camelyonpatch_level_2_split_test_all.h5
