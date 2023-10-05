@@ -1,4 +1,3 @@
-import torch
 import logging
 import argparse
 
@@ -42,13 +41,14 @@ def main(args):
         batch_size=args.batch_size,
         transform=test_transform,
         data_dir=args.data_dir,
-        data_key=args.data_key
+        data_key=args.data_key,
+        shuffle=False
     )
 
     model = model.to(device)
 
     if args.tta:
-        test_loss, test_accuracy, test_auc = evaluate_model_tta(
+        test_loss, test_accuracy, test_auc, positive_class_probs = evaluate_model_tta(
             model=model,
             test_loader=test_loader,
             loss_fn=loss_fn,
@@ -59,7 +59,7 @@ def main(args):
             original_image_weight=args.tta_original_weight
         )
     else:
-        test_loss, test_accuracy, test_auc = evaluate_model(
+        test_loss, test_accuracy, test_auc, positive_class_probs = evaluate_model(
             model=model,
             test_loader=test_loader,
             loss_fn=loss_fn,
@@ -68,6 +68,8 @@ def main(args):
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
+
+    return positive_class_probs
 
 
 if __name__ == "__main__":

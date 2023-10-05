@@ -21,3 +21,8 @@ class TransformType(Enum):
     BASE = "base"
     EVALUATION = "evaluation"
     REGULAR_SHAPE_COLOR = "regular-shape-color"
+
+
+class EnsembleStrategy(Enum):
+    MAJORITY = "majority"
+    AVERAGE = "average"

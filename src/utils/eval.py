@@ -47,7 +47,7 @@ def evaluate_model(
         pos_label=1
     )
 
-    return test_loss, accuracy, metrics.auc(fpr, tpr)
+    return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
 
 def evaluate_model_stain_ensemble(
@@ -111,7 +111,7 @@ def evaluate_model_stain_ensemble(
         pos_label=1
     )
 
-    return test_loss, accuracy, metrics.auc(fpr, tpr)
+    return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
 
 def evaluate_model_tta(
@@ -134,7 +134,7 @@ def evaluate_model_tta(
 
         :param transform: the transform used for TTA
         :param default_transform: the default transformation applied to
-                                  test samples if TTA was not to be used
+                                test samples if TTA was not to be used
     """
     batch_size = test_loader.batch_size
 
@@ -161,6 +161,7 @@ def evaluate_model_tta(
             # Predict the labels for all transformed
             # images and compute the mean prediction
             preds = model(transformed_images)
+
             test_loss += loss_fn(preds, target.repeat(n_samples + 1))
             preds = softmax(preds, dim=1)
 
@@ -196,4 +197,4 @@ def evaluate_model_tta(
         pos_label=1
     )
 
-    return test_loss, accuracy, metrics.auc(fpr, tpr)
+    return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
