@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 
 class EnsembleModel(nn.Module):
-    def __init__(self, *models):
+    def __init__(self, *models, freeze_pretrained: bool = True):
         super(EnsembleModel, self).__init__()
 
         self.models = nn.ModuleList([
-            nn.Sequential(*list(model.children())[:-1]) for model in models
+             self._prepare_model(model, freeze_pretrained) for model in models
         ])
 
         # Create a dummy variable to infer the feature size
@@ -25,6 +25,16 @@ class EnsembleModel(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(256, 2)
         )
+
+    def _prepare_model(self, model, freeze_pretrained):
+        model = nn.Sequential(*list(model.children())[:-1])  # remove last fc layer
+        
+        if freeze_pretrained:
+            for param in model.parameters():
+                param.requires_grad = False
+
+        return model
+
 
     def _get_output_size(self, model, x):
         with torch.no_grad():

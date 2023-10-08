@@ -1,11 +1,10 @@
-{
-    "ensemble": [
+[
         {
-            "type_": "RESNET_18",
-            "weights_path": "..."
+            "type_": "INCEPTION3",
+            "weights_path": "PatchCamelyon-Medical-Imaging/runs/2023-09-28T103155/model_2.pt"
         },
         {
-
+            "type_": "INCEPTION3",
+            "weights_path": "runs/2023-09-28T201736/model_1.pt"
         }
     ]
-}
