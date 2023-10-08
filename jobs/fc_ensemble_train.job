@@ -14,7 +14,7 @@ module load Anaconda3/2022.05
 
 source activate medical-imaging
 
-srun python $HOME/PatchCamelyon-Medical-Imaging/trainensembkle.py \
+srun python $HOME/PatchCamelyon-Medical-Imaging/trainensemble.py \
     --config PatchCamelyon-Medical-Imaging/configs/connected_ensemble/config.json \
     --epochs 1 \
     --transform "evaluation"
