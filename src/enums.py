@@ -15,6 +15,7 @@ class ModelType(Enum):
     INCEPTION_V_3 = "inception3"
     VIT_32_L = "vit-32-l"
     SWIN_V2_B = "swin-v2-b"
+    CONNECTED_ENSEMBLE = "connected-ensemble"
 
 
 class TransformType(Enum):
@@ -26,3 +27,5 @@ class TransformType(Enum):
 class EnsembleStrategy(Enum):
     MAJORITY = "majority"
     AVERAGE = "average"
+
+

@@ -1,0 +1,11 @@
+{
+    "ensemble": [
+        {
+            "type_": "RESNET_18",
+            "weights_path": "..."
+        },
+        {
+
+        }
+    ]
+}
