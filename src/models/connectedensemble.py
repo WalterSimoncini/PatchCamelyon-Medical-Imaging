@@ -10,7 +10,8 @@ class EnsembleModel(nn.Module):
         ])
 
         # Create a dummy variable to infer the feature size
-        x_dummy = torch.zeros(1, 3, 224, 224)  # assuming input size is [1, 3, 224, 224]
+        x_dummy = torch.zeros(1, 3, 299, 299)  # assuming input size is [1, 3, 299, 299]
+        # TODO support multiple input sizes
 
         # Get the output feature size for each model and sum them up
         concatenated_size = sum(self._get_output_size(model, x_dummy) for model in self.models)

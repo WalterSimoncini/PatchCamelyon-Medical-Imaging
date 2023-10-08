@@ -32,11 +32,13 @@ def main(args):
     os.makedirs(run_folder)
 
     loss_fn = nn.CrossEntropyLoss()
-    model, input_size = get_ensemble(config=args.config)
+    with open(args.config, 'r') as file:
+        config = json.load(file)
+    model, sizes = get_ensemble(config=config)
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
-    train_transform = get_transform(type_=args.transform, input_size=input_size)
-    test_transform = get_transform(type_=TransformType.EVALUATION, input_size=input_size)
+    train_transform = get_transform(type_=args.transform, input_size=sizes[0]) # TODO make adaptive for mulitple input sizes
+    test_transform = get_transform(type_=TransformType.EVALUATION, input_size=sizes[0])
 
     device_name = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device_name)
@@ -45,7 +47,7 @@ def main(args):
         "device": device_name,
         "optimizer": optimizer.__class__.__name__,
         "loss_fn": loss_fn.__class__.__name__,
-        "model": args.model.value
+        "model": f"ensemble of {c['type_'] for c in config}"
     }
 
     # Convert the enum to a string so it can be serialized
@@ -146,7 +148,7 @@ if __name__ == "__main__":
     parser.add_argument("--lr", default=1e-5, type=float, help="Learning rate")
     parser.add_argument("--wd", default=0, type=float, help="Weight decay")
     parser.add_argument("--epochs", default=10, type=int, help="Number of epochs to train for")
-    parser.add_argument("--config", default="config.json", type=str, help="The configuration file for the ensemble")
+    parser.add_argument("--config", default="configs/connected_ensemble/config.json", type=str, help="The configuration file for the ensemble")
     parser.add_argument("--transform", type=TransformType, choices=list(TransformType), required=True, help="The transform pipeline to be used for training")
     parser.add_argument("--data-dir", default="data", type=str, help="The directory containing the Patch Camelyon data")
     parser.add_argument("--data-key", default="x", type=str, help="The dataset key which contains the image data. Regular datasets have a single key 'x' and stain-normalized ones have ['norm', 'E', 'H']")

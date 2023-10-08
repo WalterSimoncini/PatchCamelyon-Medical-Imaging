@@ -10,7 +10,7 @@ from .vit16b import ViT16BFactory
 from .inception3 import InceptionV3Factory
 from .vit32l import ViT32LFactory
 from .swin2b import SwinV2BFactory
-from connectedensemble import EnsembleModel
+from .connectedensemble import EnsembleModel
 
 
 def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, int]:
@@ -31,18 +31,20 @@ def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, in
     return factory.base_model(), factory.input_size()
 
 def get_ensemble(config: list[dict]):
-    config = [
-        {
-            "type": ModelType.RESNET_18,
-            "weights_path": ...
-        }
-    ]
+    models = []
+    sizes = []
+    for c in config:
+        print(c)
+        c["type_"] = ModelType(c["type_"])
+        model, size = get_model(**c)
+        models.append(model)
+        sizes.append(size)
 
-    models = [get_model(**c) for c in config]
+
 
     ensemble_model = EnsembleModel(*models)
 
-    return ensemble_model
+    return ensemble_model, sizes
 
 
 
