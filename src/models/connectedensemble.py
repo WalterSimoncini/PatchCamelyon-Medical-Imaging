@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
 from .inception3 import InceptionV3Wrapper
+from .vit16b import ViT16BFactory
+from .vit32l import ViT32LFactory
+from torchvision.models.vision_transformer import VisionTransformer
+import numpy as np
 
 class EnsembleModel(nn.Module):
     def __init__(self, *models, freeze_pretrained: bool = True):
@@ -11,10 +15,14 @@ class EnsembleModel(nn.Module):
         ])
 
         # Create a dummy variable to infer the feature size
-        x_dummy = torch.zeros(64, 3, 299, 299)  # assuming input size is [1, 3, 299, 299]
+        # x_dummy = torch.zeros(64, 3, 299, 299)  # assuming input size is [1, 3, 299, 299]
 
+        input_sizes = [model.image_size for model in models]
+        dummies = [torch.zeros(64, 3, input_size, input_size) for input_size in input_sizes]
+
+        z = zip(models, dummies)
         # Get the output feature size for each model and sum them up
-        concatenated_size = sum(self._get_output_size(model, x_dummy) for model in self.models)
+        concatenated_size = sum(self._get_output_size(model, x_dummy) for (model, x_dummy) in z)
 
         # Creating new classification head
         self.classifier = nn.Sequential(
@@ -51,6 +59,8 @@ class EnsembleModel(nn.Module):
         return x
     
     def _forward_single_model(self, model, x):
+        if model.image_size != x.size:
+            x = torch.nn.functional.interpolate(x, size=(model.image_size, model.image_size), mode='bilinear')
         with torch.no_grad():
             x = model(x)
         # if isinstance(model, InceptionV3Wrapper):

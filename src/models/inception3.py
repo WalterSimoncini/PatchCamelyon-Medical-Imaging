@@ -20,6 +20,8 @@ class InceptionV3Wrapper(nn.Module):
         super().__init__()
         self.model = model
 
+    image_size = 299
+
     def forward(self, x):
         if self.training:
             return self.model(x).logits

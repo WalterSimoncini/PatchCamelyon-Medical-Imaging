@@ -119,6 +119,9 @@ def train_epoch(
 
         optimizer.step()
 
+        if batch_nr > 5:
+            break
+
     train_loss /= batches_n
     accuracy = correct_preds / len(train_loader.dataset)
 

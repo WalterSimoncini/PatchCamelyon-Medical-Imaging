@@ -2,5 +2,9 @@
         {
             "type_": "inception3",
             "weights_path": "checkpoints/inception/model_5.pt"
+        },
+        {
+            "type_": "vit-16-b",
+            "weights_path": "checkpoints/vit16b/model_1.pt"
         }
     ]

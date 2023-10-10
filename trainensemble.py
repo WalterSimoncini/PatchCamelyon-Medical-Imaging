@@ -37,13 +37,13 @@ def main(args):
     model, sizes = get_ensemble(config=config)
     optimizer = optim.Adam(model.classifier.parameters(), lr=args.lr, weight_decay=args.wd)
 
-    train_transform = get_transform(type_=args.transform, input_size=sizes[0]) # TODO make adaptive for mulitple input sizes
-    test_transform = get_transform(type_=TransformType.EVALUATION, input_size=sizes[0])
+    train_transform = get_transform(type_=args.transform, input_size=max(sizes)) # TODO make adaptive for mulitple input sizes
+    test_transform = get_transform(type_=TransformType.EVALUATION, input_size=max(sizes))
 
     if torch.cuda.is_available():
         device_name = "cuda" 
-    elif torch.backends.mps.is_available():
-        device_name = "mps"
+    # elif torch.backends.mps.is_available():
+    #     device_name = "mps"
     else:
         device_name = "cpu"
 
@@ -71,6 +71,9 @@ def main(args):
     )
 
     model = model.to(device)
+
+    # TODO Get the data loaders, but get these for each model separately so that we can use different transforms for each model 
+    # Actually, it is probably easier to add a transform to the connectedensemble class
     train_loader, val_loader, test_loader = get_data_loaders(
         batch_size=args.batch_size,
         train_transform=train_transform,
