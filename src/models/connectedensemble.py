@@ -26,8 +26,11 @@ class EnsembleModel(nn.Module):
         # Example: for InceptionV3, just use up to the fc layer.
         if isinstance(model, InceptionV3Wrapper):  # replace with actual class
             model.model.fc = nn.Identity()  # replace the FC layer with identity (does nothing, keeps tensor same)
+            # model = model.model
+        elif isinstance(model, VisionTransformer):
+            model.heads = nn.Identity()
         # TODO Add similar handling for other model types as needed.
-        model = model.model
+        # model = model.model
         if freeze_pretrained:
             for param in model.parameters():
                 param.requires_grad = False
@@ -50,4 +53,6 @@ class EnsembleModel(nn.Module):
     def _forward_single_model(self, model, x):
         with torch.no_grad():
             x = model(x)
-        return x.logits.view(x.logits.size(0), -1)  # Flatten the output
+        # if isinstance(model, InceptionV3Wrapper):
+        #     x = x.logits
+        return x.view(x.size(0), -1)  # Flatten the output

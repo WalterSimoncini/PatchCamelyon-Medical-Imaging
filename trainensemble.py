@@ -40,7 +40,13 @@ def main(args):
     train_transform = get_transform(type_=args.transform, input_size=sizes[0]) # TODO make adaptive for mulitple input sizes
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=sizes[0])
 
-    device_name = "cuda" if torch.cuda.is_available() else "cpu"
+    if torch.cuda.is_available():
+        device_name = "cuda" 
+    elif torch.backends.mps.is_available():
+        device_name = "mps"
+    else:
+        device_name = "cpu"
+
     device = torch.device(device_name)
 
     run_config = vars(args) | {

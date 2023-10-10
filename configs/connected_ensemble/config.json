@@ -1,10 +1,6 @@
 [
         {
             "type_": "inception3",
-            "weights_path": "checkpoints/inception/model_4.pt"
-        },
-        {
-            "type_": "inception3",
             "weights_path": "checkpoints/inception/model_5.pt"
         }
     ]
