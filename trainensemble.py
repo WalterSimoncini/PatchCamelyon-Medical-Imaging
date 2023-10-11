@@ -96,7 +96,7 @@ def main(args):
         use_lr_scheduler=args.lr_scheduler
     )
 
-    _, test_accuracy, _ = evaluate_model(
+    _, test_accuracy, test_auc, _ = evaluate_model(
         model=model,
         test_loader=test_loader,
         loss_fn=loss_fn,
@@ -104,6 +104,7 @@ def main(args):
     )
 
     logging.info(f"the test accuracy was {test_accuracy}")
+    logging.info(f"the test auc was {test_auc}")
     wandb.run.summary["acc/test"] = test_accuracy
 
     run.finish()
