@@ -31,10 +31,11 @@ class EnsembleModel(nn.Module):
         )
 
         if weights_path is not None:
-            
-            model.load_state_dict(
-            torch.load(weights_path, map_location=torch.device("cpu"))
-        )
+            weights = torch.load(weights_path, map_location=torch.device("cpu"))
+            class_weights = weights["classifier.0.weight"]
+            class_bias = weights["classifier.0.bias"]
+            self.classifier[0].weight.data = class_weights
+            self.classifier[0].bias.data = class_bias
 
     def _prepare_model(self, model, freeze_pretrained):
         # Handle various model types accordingly.
