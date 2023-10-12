@@ -30,7 +30,7 @@ def get_model(type_: ModelType, weights_path: str = None) -> Tuple[nn.Module, in
 
     return factory.base_model(), factory.input_size()
 
-def get_ensemble(config: list[dict]):
+def get_ensemble(config: list[dict], weights_path = None):
     models = []
     sizes = []
     for c in config:
@@ -40,9 +40,7 @@ def get_ensemble(config: list[dict]):
         models.append(model)
         sizes.append(size)
 
-
-
-    ensemble_model = EnsembleModel(*models)
+    ensemble_model = EnsembleModel(*models, weights_path=weights_path)
 
     return ensemble_model, sizes
 

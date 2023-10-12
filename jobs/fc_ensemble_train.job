@@ -15,6 +15,6 @@ module load Anaconda3/2022.05
 source activate medical-imaging
 
 srun python $HOME/PatchCamelyon-Medical-Imaging/trainensemble.py \
-    --config configs/connected_ensemble/swin_vit.json \
+    --config configs/connected_ensemble/inception_vit.json \
     --epochs 5 \
     --transform "regular-shape-color"

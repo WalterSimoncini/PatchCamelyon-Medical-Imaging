@@ -7,7 +7,7 @@ from torchvision.models.vision_transformer import VisionTransformer
 import numpy as np
 
 class EnsembleModel(nn.Module):
-    def __init__(self, *models, freeze_pretrained: bool = False):
+    def __init__(self, *models, weights_path = None, freeze_pretrained: bool = True):
         super(EnsembleModel, self).__init__()
 
         self.models = nn.ModuleList([
@@ -26,7 +26,14 @@ class EnsembleModel(nn.Module):
 
         # Creating new classification head
         self.classifier = nn.Sequential(
+            # nn.Dropout(0.5),
             nn.Linear(concatenated_size, 2, dtype=torch.float64)
+        )
+
+        if weights_path is not None:
+            
+            model.load_state_dict(
+            torch.load(weights_path, map_location=torch.device("cpu"))
         )
 
     def _prepare_model(self, model, freeze_pretrained):

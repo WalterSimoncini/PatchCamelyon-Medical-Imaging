@@ -1,5 +1,6 @@
 import logging
 import argparse
+import json
 
 import torch.nn as nn
 
@@ -26,7 +27,9 @@ def main(args):
 
     device = get_device()
     loss_fn = nn.CrossEntropyLoss()
-    model, input_size = get_ensemble(config=config) # Add weight paths to config
+    with open(args.config, 'r') as file:
+        config = json.load(file)
+    model, input_size = get_ensemble(config=config, weights_path=args.model_path) # Add weight paths to config
 
     if args.tta:
         test_transform = None
@@ -79,7 +82,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--model-path", default="runs", type=str, help="Path to the model weights", required=True)
     parser.add_argument("--batch-size", default=64, type=int, help="Batch size for training and validation")
-    parser.add_argument("--model", type=ModelType, choices=list(ModelType), required=True, help="The type of model to evaluate")
+    parser.add_argument("--config", required=True, help="The config of ensemble to evaluate")
     parser.add_argument("--tta", action=argparse.BooleanOptionalAction, help="Whether to use test-time augmentation")
     parser.add_argument("--tta-transform", type=TransformType, choices=list(TransformType), help="The transform used for TTA")
     parser.add_argument("--tta-samples", type=int, default=5, help="The number of TTA samples to be used")
