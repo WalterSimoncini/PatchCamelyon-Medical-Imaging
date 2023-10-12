@@ -7,7 +7,7 @@ from torchvision.models.vision_transformer import VisionTransformer
 import numpy as np
 
 class EnsembleModel(nn.Module):
-    def __init__(self, *models, freeze_pretrained: bool = True):
+    def __init__(self, *models, freeze_pretrained: bool = False):
         super(EnsembleModel, self).__init__()
 
         self.models = nn.ModuleList([

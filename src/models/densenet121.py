@@ -11,5 +11,6 @@ class DenseNet121Factory(ModelFactory):
     def base_model(self) -> nn.Module:
         model = densenet121(weights=DenseNet121_Weights.DEFAULT)
         model.classifier = nn.Linear(in_features=1024, out_features=2)
+        model.image_size = 224
 
         return model

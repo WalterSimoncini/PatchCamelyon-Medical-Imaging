@@ -1,0 +1,10 @@
+[
+    {
+        "type_": "vit-16-b",
+        "weights_path": "checkpoints/vit16b/model_1.pt"
+    },
+    {
+        "type_": "swin-v2-b",
+        "weights_path": "checkpoints/swinv2b/model_1.pt"
+    }
+]

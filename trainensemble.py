@@ -35,7 +35,7 @@ def main(args):
     with open(args.config, 'r') as file:
         config = json.load(file)
     model, sizes = get_ensemble(config=config)
-    optimizer = optim.Adam(model.classifier.parameters(), lr=args.lr, weight_decay=args.wd)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
     train_transform = get_transform(type_=args.transform, input_size=max(sizes)) # TODO make adaptive for mulitple input sizes
     test_transform = get_transform(type_=TransformType.EVALUATION, input_size=max(sizes))

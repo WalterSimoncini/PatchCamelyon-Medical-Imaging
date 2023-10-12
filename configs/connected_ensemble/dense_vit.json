@@ -1,0 +1,10 @@
+[
+    {
+        "type_": "densenet121",
+        "weights_path": "checkpoints/densenet/model_0.pt"
+    },
+    {
+        "type_": "vit-16-b",
+        "weights_path": "checkpoints/vit16b/model_1.pt"
+    }
+]

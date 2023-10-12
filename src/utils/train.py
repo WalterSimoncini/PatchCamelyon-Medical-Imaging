@@ -40,7 +40,7 @@ def train(
             train_loader=train_loader
         )
 
-        val_loss, val_accuracy, val_auc = evaluate_model(
+        val_loss, val_accuracy, val_auc, _ = evaluate_model(
             model=model,
             test_loader=val_loader,
             loss_fn=loss_fn,
@@ -119,8 +119,8 @@ def train_epoch(
 
         optimizer.step()
 
-        if batch_nr > 5:
-            break
+        # if batch_nr > 1000:
+        #     break
 
     train_loss /= batches_n
     accuracy = correct_preds / len(train_loader.dataset)
