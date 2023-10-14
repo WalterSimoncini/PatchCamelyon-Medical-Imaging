@@ -15,6 +15,7 @@ class ModelType(Enum):
     INCEPTION_V_3 = "inception3"
     VIT_32_L = "vit-32-l"
     SWIN_V2_B = "swin-v2-b"
+    HF_VIT_16_B = "hf-16-b"
 
 
 class TransformType(Enum):

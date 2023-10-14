@@ -1,5 +1,6 @@
 import torch.nn as nn
 
+from typing import Tuple
 from .base_factory import ModelFactory
 from torchvision.models import vit_b_16, ViT_B_16_Weights
 
@@ -15,3 +16,8 @@ class ViT16BFactory(ModelFactory):
         )
 
         return model
+
+    def to_feature_extractor(self, model: nn.Module) -> Tuple[nn.Module, int]:
+        model.heads = nn.Identity()
+
+        return model, 768

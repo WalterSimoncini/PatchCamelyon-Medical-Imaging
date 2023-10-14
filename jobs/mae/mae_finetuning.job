@@ -17,7 +17,8 @@ source activate mae
 pip install scikit-learn
 pip install tensorboard
 
-srun python $HOME/mae_finetuning.py \
-    --model-path $HOME/mae-res/checkpoint-600000 \
-    --dataset-path $HOME/hf \
-    --output-dir /scratch-shared/$USER/vit-models
+srun python $HOME/pcam-stain/mae/mae_finetuning.py \
+    --model-path $HOME/pcam-stain/models/checkpoint-5500 \
+    --dataset-path $HOME/pcam-stain/data/hf \
+    --output-dir /scratch-shared/$USER/vit-models \
+    --lr 0.0001

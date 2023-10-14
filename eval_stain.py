@@ -19,9 +19,9 @@ def main(args):
     loss_fn = nn.CrossEntropyLoss()
 
     # Here we assume that the four models all belong to the same model class/type
-    image_model, input_size = get_model(type_=args.image_model, weights_path=args.image_model_path)
-    norm_model, _ = get_model(type_=args.norm_model, weights_path=args.norm_model_path)
-    H_model, _ = get_model(type_=args.H_model, weights_path=args.H_model_path)
+    image_model, input_size, _ = get_model(type_=args.image_model, weights_path=args.image_model_path)
+    norm_model, _, _ = get_model(type_=args.norm_model, weights_path=args.norm_model_path)
+    H_model, _, _ = get_model(type_=args.H_model, weights_path=args.H_model_path)
 
     # Move the models to the appropriate device
     norm_model = norm_model.to(device)
@@ -43,7 +43,7 @@ def main(args):
         num_workers=get_num_workers()
     )
 
-    test_loss, test_accuracy, test_auc, _ = evaluate_model_stain_ensemble(
+    test_loss, test_accuracy, test_auc, positive_class_probs = evaluate_model_stain_ensemble(
         image_model=image_model,
         norm_model=norm_model,
         H_model=H_model,
@@ -55,6 +55,8 @@ def main(args):
 
     logging.info(f"the test accuracy was {test_accuracy} (loss: {test_loss})")
     logging.info(f"the test auc was {test_auc}")
+
+    return positive_class_probs
 
 
 if __name__ == "__main__":

@@ -14,6 +14,8 @@ from src.utils.eval import evaluate_model, evaluate_model_tta
 
 
 def main(args):
+    logging.info(f"evaluating model {args.model_path} ({args.model})")
+
     # Verify that a transform was provided if TTA was chosen
     if args.tta and args.tta_transform is None:
         raise ValueError(f"No transform was provided for TTA")
@@ -26,7 +28,7 @@ def main(args):
 
     device = get_device()
     loss_fn = nn.CrossEntropyLoss()
-    model, input_size = get_model(type_=args.model, weights_path=args.model_path)
+    model, input_size, _ = get_model(type_=args.model, weights_path=args.model_path)
 
     if args.tta:
         test_transform = None

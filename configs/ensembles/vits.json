@@ -1,0 +1,45 @@
+[
+    {
+        "test_type": "stain-ensemble",
+        "image_model": "vit-16-b",
+        "image_model_path": "models/stain-models/vit16b/regular/model_1.pt",
+        "norm_model": "vit-16-b",
+        "norm_model_path": "models/stain-models/vit16b/norm/model_0.pt",
+        "H_model": "vit-16-b",
+        "H_model_path": "models/stain-models/vit16b/H/model_3.pt",
+        "dataset_path": "data/camelyonpatch_level_2_split_test_all.h5"
+    },
+    {
+        "test_type": "regular",
+        "model_path": "models/swinv2b/model_1.pt",
+        "batch_size": 128,
+        "model": "swin-v2-b",
+        "tta": false,
+        "tta_trasform": "regular-shape-color",
+        "tta_samples": 5,
+        "data_dir": "data",
+        "data_key": "x"
+    },
+    {
+        "test_type": "regular",
+        "model_path": "models/vit32l/model_1.pt",
+        "batch_size": 128,
+        "model": "vit-32-l",
+        "tta": false,
+        "tta_trasform": "regular-shape-color",
+        "tta_samples": 5,
+        "data_dir": "data",
+        "data_key": "x"
+    },
+    {
+        "test_type": "regular",
+        "model_path": "models/vit16b/model_1.pt",
+        "batch_size": 128,
+        "model": "vit-16-b",
+        "tta": false,
+        "tta_trasform": "regular-shape-color",
+        "tta_samples": 5,
+        "data_dir": "data",
+        "data_key": "x"
+    }
+]

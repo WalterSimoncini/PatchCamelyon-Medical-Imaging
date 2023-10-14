@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+from typing import Tuple
 from abc import ABC, abstractmethod
 
 
@@ -21,4 +22,12 @@ class ModelFactory(ABC):
             torch.load(weights_path, map_location=torch.device("cpu"))
         )
 
-        return model, self.input_size()
+        return model
+
+    def to_feature_extractor(self, model: nn.Module) -> Tuple[nn.Module, int]:
+        """
+            Converts a model to a feature extractor, by removing
+            any classification layer/head it may have. Returns
+            the input model and its feature size
+        """
+        raise NotImplementedError

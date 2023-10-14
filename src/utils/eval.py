@@ -52,6 +52,49 @@ def evaluate_model(
     return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
 
 
+def evaluate_model_ensemble(
+    model: nn.Module,
+    test_loader: DataLoader,
+    loss_fn: nn.Module,
+    device: torch.device
+):
+    model.eval()
+
+    ground_truth = np.zeros(len(test_loader.dataset))
+    true_class_probs = np.zeros(len(test_loader.dataset))
+
+    batch_size = test_loader.batch_size
+    test_loss, correct_preds, batches_n = 0, 0, 0
+
+    with torch.no_grad():
+        # The E images are not used as they do not yield good representations
+        for i, (images, norms, Hs, Es, targets) in enumerate(tqdm(test_loader)):
+            targets = targets.to(device)
+            images, norms, Hs = images.to(device), norms.to(device), Hs.to(device)
+
+            preds = model.forward(images=images, norms=norms, Hs=Hs)
+            test_loss += loss_fn(preds, targets)
+
+            # Update the arrays used to compute the ROC and AUC
+            ground_truth[(i * batch_size):((i + 1) * batch_size)] = targets.cpu().numpy()
+            true_class_probs[(i * batch_size):((i + 1) * batch_size)] = softmax(preds, dim=1)[:, 1].cpu().numpy()
+
+            batches_n += 1
+            preds = preds.argmax(dim=1)
+            correct_preds += (preds == targets).sum()
+
+    test_loss /= batches_n
+    accuracy = correct_preds / len(test_loader.dataset)
+
+    fpr, tpr, _ = metrics.roc_curve(
+        ground_truth,
+        true_class_probs,
+        pos_label=1
+    )
+
+    return test_loss, accuracy, metrics.auc(fpr, tpr), true_class_probs
+
+
 def evaluate_model_stain_ensemble(
     image_model: nn.Module,
     norm_model: nn.Module,
@@ -72,8 +115,9 @@ def evaluate_model_stain_ensemble(
     with torch.no_grad():
         for i, (images, norms, Hs, Es, targets) in enumerate(tqdm(test_loader)):
             targets = targets.to(device)
-            # FIXME: We can probably remove the Es as they are not
-            # being actively used
+
+            # FIXME: We can probably remove the Es
+            # as they are not being used
             Hs, Es = Hs.to(device), Es.to(device)
             images, norms = images.to(device), norms.to(device)
 
@@ -99,7 +143,7 @@ def evaluate_model_stain_ensemble(
                     # Take the argmaxes, count the number of positive predictions
                     # and create a tensor [1 - pos_preds/3, pos_preds/3]
                     pos_prob = preds.argmax(dim=1).sum() / 3
-                    preds = torch.tensor([1 - pos_prob, pos_prob])
+                    preds = torch.tensor([1 - pos_prob, pos_prob], device=device).unsqueeze(dim=0)
                 else:
                     raise ValueError(f"Ensembling strategy {strategy} is not supported")
 
@@ -162,17 +206,25 @@ def evaluate_model_tta(
         for i, (image, target) in enumerate(tqdm(test_loader)):
             image, target = image.to(device), target.to(device)
 
-            # Generate n transformations of the given image, plus the
-            # original image with the default transformation
-            transformed_images = torch.cat(
-                [default_transform(image)] + [transform(image) for _ in range(n_samples)],
-                dim=0
-            ).to(device)
+            if image.mean() > 0.85:
+                # For very bright images (e.g. white or almost) skip
+                # augmentations as they may transform images such that
+                # they generate NaN values when normalized
+                transformed_targets = target
+                transformed_images = image
+            else:
+                # Generate n transformations of the given image, plus the
+                # original image with the default transformation
+                transformed_targets = target.repeat(n_samples + 1)
+                transformed_images = torch.cat(
+                    [default_transform(image)] + [transform(image) for _ in range(n_samples)],
+                    dim=0
+                ).to(device)
 
             # Predict the labels for all transformed
             # images and compute the mean prediction
             preds = model(transformed_images)
-            test_loss += loss_fn(preds, target.repeat(n_samples + 1))
+            test_loss += loss_fn(preds, transformed_targets)
             preds = softmax(preds, dim=1)
 
             if original_image_weight is None:

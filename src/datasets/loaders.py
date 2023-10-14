@@ -36,4 +36,4 @@ def get_num_workers() -> int:
         # Workaround for macos
         return 0
 
-    return 2
+    return os.cpu_count()
