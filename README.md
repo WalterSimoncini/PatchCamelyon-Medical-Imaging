@@ -170,7 +170,7 @@ Or you can use the `mae/tools/download_wsl.py` script to download an arbitrary n
 ```sh
 python mae/tools/download_wsl.py \
   --output-folder /scratch-shared/$USER/wsl \
-  --max-images
+  --max-images 10
 ```
 
 ### Splitting the WSL images
@@ -238,13 +238,3 @@ python $HOME/vit_finetuning.py \
 ```
 
 You will find the fine-tuned checkpoints in `/scratch-shared/$USER/vit-models`
-
-## TODOs
-
-- Ensemble different models
-  - Including what Jonas said
-- Paper
-- ViT fine-tuning
-- Maybe combine the stain ensemble with TTA?
-- Add support for majority voting for the stain ensemble?
-- Pack the new (better) models

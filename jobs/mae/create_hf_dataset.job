@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=18
 #SBATCH --gpus=1
 #SBATCH --partition=gpu
-#SBATCH --time=02:00:00
+#SBATCH --time=01:30:00
 
 # Load modules
 module purge
@@ -16,7 +16,7 @@ source activate medical-imaging
 
 # Convert the PCam dataset to the arrow format, so
 # that it can be used with HuggingFace
-srun python tools/create_hf_dataset.py \
+srun python mae/tools/create_hf_dataset.py \
     --root-folder $HOME/pcam-stain/data/real \
     --output-path $HOME/pcam-stain/data/hf \
     --num-proc 18

@@ -1,0 +1,17 @@
+{
+    "models": {
+        "image": {
+            "model": "vit-16-b",
+            "model_path": "stain-models/vit16b/regular/model_1.pt"
+        },
+        "norm": {
+            "model": "vit-16-b",
+            "model_path": "stain-models/vit16b/norm/model_0.pt"
+        },
+        "H": {
+            "model": "vit-16-b",
+            "model_path": "stain-models/vit16b/H/model_3.pt"
+        }
+    },
+    "hidden_sizes": [1024, 512, 256, 128]
+}

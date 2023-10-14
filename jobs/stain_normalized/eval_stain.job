@@ -15,36 +15,33 @@ module load Anaconda3/2022.05
 source activate medical-imaging
 
 # Experiment config
-MODEL_TYPE="swin-v2-b"
+MODEL_TYPE="vit-16-b"
 
 H_MODEL_PATH="$HOME/stain-models/H/model_3.pt"
 E_MODEL_PATH="$HOME/stain-models/E/model_1.pt"
-# NORM_MODEL_PATH="$HOME/stain-models/norm/model_0.pt"
-# Swin V2 B model
-NORM_MODEL_PATH="runs/2023-10-02T104505/model_1.pt"
+NORM_MODEL_PATH="$HOME/stain-models/norm/model_0.pt"
 
-# Evaluate the models
+# Evaluate the models for the normalized images and H&E components
 echo "Evaluation (norm)"
-srun python $HOME/pcam-stain/eval.py \
+srun python $HOME/ensemble-fusion/pcam-stain/eval.py \
     --model-path $NORM_MODEL_PATH \
     --model $MODEL_TYPE \
     --split valid \
     --data-key norm \
     --data-dir data/stain
 
-# Uncomment to evaluate the H and E models as well
-# echo "Evaluation (H)"
-# srun python $HOME/pcam-stain/eval.py \
-#     --model-path $H_MODEL_PATH \
-#     --model $MODEL_TYPE \
-#     --split test \
-#     --data-key H \
-#     --data-dir data/stain
+echo "Evaluation (H)"
+srun python $HOME/pcam-stain/eval.py \
+    --model-path $H_MODEL_PATH \
+    --model $MODEL_TYPE \
+    --split test \
+    --data-key H \
+    --data-dir data/stain
 
-# echo "Evaluation (E)"
-# srun python $HOME/pcam-stain/eval.py \
-#     --model-path $E_MODEL_PATH \
-#     --model $MODEL_TYPE \
-#     --split test \
-#     --data-key E \
-#     --data-dir data/stain
+echo "Evaluation (E)"
+srun python $HOME/pcam-stain/eval.py \
+    --model-path $E_MODEL_PATH \
+    --model $MODEL_TYPE \
+    --split test \
+    --data-key E \
+    --data-dir data/stain

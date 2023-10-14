@@ -172,4 +172,4 @@ test/
 camelyon17_wsl/
 wsl_images/
 *.out
-models/
+models/*

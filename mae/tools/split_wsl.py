@@ -52,15 +52,14 @@ def main(args):
     print(f"splitting will result in {n_rows * n_cols} cells")
 
     for x, y in tqdm(product(range(n_rows), range(n_cols))):
-        cell_image = Image.fromarray(
-            image_per_cell(
-                image=wsl_image,
-                cell_size=output_cell_size,
-                x=x,
-                y=y
-            )
-        )
+        cell = image_per_cell(image=wsl_image, cell_size=output_cell_size, x=x, y=y)
 
+        if cell.mean() > args.brightness_threshold:
+            # Skip images that are too bright as they do not
+            # contain enough relevant information
+            continue
+
+        cell_image = Image.fromarray(cell)
         cell_image.save(os.path.join(output_folder, f"cell_{x}_{y}.jpg"))
 
 
@@ -69,6 +68,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--input-image", type=str, required=True, help="The image to split")
     parser.add_argument("--cell-size", type=int, default=224, help="The size of output cells")
+    parser.add_argument("--brightness-threshold", type=int, default=150, help="The maximum average brightess allowed for picked images")
     parser.add_argument("--padding", type=int, default=11000, help="The borders to be removed from the input image before splitting")
     parser.add_argument("--output-folder", type=str, required=True, help="The root output folder (the program will create a sub-directory for the input image)")
 
