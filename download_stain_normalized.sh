@@ -1,4 +1,3 @@
-# NOTE: The bucket must allow public access before data can be downloaded
 # Create a directory for the data
 mkdir -p data/stain
 

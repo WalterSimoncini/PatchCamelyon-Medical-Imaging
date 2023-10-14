@@ -14,6 +14,10 @@ Download the Patch Camelyon data using the following command (they will be downl
 
 ```sh
 sh download.sh
+# If Google Drive returns an error you can use
+# the following command to download the data
+# from a mirror
+# sh download_mirror.sh
 ```
 
 And finally log into wandb
@@ -22,7 +26,21 @@ And finally log into wandb
 wandb login
 ```
 
-You're now ready to go! If you're running scrips/developing on Snellius there's a tailored guide in `snellius.md`
+You're now ready to go! If you're running scrips/developing on Snellius there's a tailored guide in `snellius.md`.
+
+### Stain-Normalized data
+
+If needed, you can download the stain normalize data using the following command
+
+```sh
+sh download_stain_normalized.sh
+```
+
+The `x` files will contain three keys:
+
+- `norm`: Macenko-normalized images
+- `E`: the eosin component from the Macenko normalization
+- `H`: the hematoxylin component from the Macenko normalization
 
 ## Vision Models and Data Augmentation
 
