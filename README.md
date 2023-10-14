@@ -42,6 +42,34 @@ The `x` files will contain three keys:
 - `E`: the eosin component from the Macenko normalization
 - `H`: the hematoxylin component from the Macenko normalization
 
+### Pretrained Models
+
+Click the links below (or use `wget`) to download the pretrained models
+
+- [ResNet50](https://storage.googleapis.com/pcam-stain/models/base/resnet50.tar.gz)
+- [DenseNet121](https://storage.googleapis.com/pcam-stain/models/base/densenet121.tar.gz)
+- [Inception V3](https://storage.googleapis.com/pcam-stain/models/base/inception.tar.gz)
+- [Swin V2 B](https://storage.googleapis.com/pcam-stain/models/base/swinv2b.tar.gz)
+- [ViT 16 B](https://storage.googleapis.com/pcam-stain/models/base/vit16b.tar.gz)
+- [ViT 32 L](https://storage.googleapis.com/pcam-stain/models/base/vit32l.tar.gz)
+- [ViT 16 B (fine-tuned after MAE pretraining)](https://storage.googleapis.com/pcam-stain/models/base/hf-vit16b.tar.gz)
+  - You can't use this model directly with torchvision, but you have to load it with HuggingFace using the `hf-16-b` model type
+
+#### Stain-Normalized
+
+You can download the pretrained models for stain-normalized data using the following commands
+
+```sh
+# Normalized images
+wget https://storage.googleapis.com/pcam-stain/models/stain/norm.tar.gz
+# Original images
+wget https://storage.googleapis.com/pcam-stain/models/stain/images.tar.gz
+# Hematoxylin (H) images
+wget https://storage.googleapis.com/pcam-stain/models/stain/H.tar.gz
+# Eosin (E) images
+wget https://storage.googleapis.com/pcam-stain/models/stain/E.tar.gz
+```
+
 ## Vision Models and Data Augmentation
 
 We trained several vision models (CNNs and Vision Transformers) over the Patch Camelyon dataset, and the best performing one seems to be the [SwinTransformer V2](https://pytorch.org/vision/main/models/swin_transformer.html). The models can be trained using the `train.py` script as follows:
@@ -173,7 +201,11 @@ This repository also contains utilities to pretrain a ViT using the Masked Autoe
 4. Pretrain the ViT using the masked autoencoding strategy
 5. Fine-tune the ViT for classification
 
-The subsections below show how each step can be performed
+The subsections below show how each step can be performed. You can download a checkpoint trained for 3 epochs on 8 WSIs (~8% of the entire Camelyon17 dataset), which correspond to ~2M image patches, using the following command:
+
+```sh
+wget https://storage.googleapis.com/pcam-stain/models/pretrained-mae.tar.gz
+```
 
 ### Retrieving WSL images
 
