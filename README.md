@@ -51,7 +51,6 @@ Click the links below (or use `gdown`) to download the pretrained models
 - [Inception V3](https://drive.google.com/file/d/1wcetqyKtpJf_7yYAg82feWsLnYmDhQeg/view?usp=drive_link)
 - [Swin V2 B](https://drive.google.com/file/d/1SioQ9vgVwOg2BGfXGuqE2wTiKtYruFAr/view?usp=drive_link)
 - [ViT 16 B](https://drive.google.com/file/d/1GbuS4TQ21K9HtlGFyPnj20OupeajuW51/view?usp=drive_link)
-- [ViT 32 L](https://drive.google.com/file/d/1xBR-3PS3UjH09IuKdOvaN-0XU5jyydhL/view?usp=drive_link)
 - [ViT 16 B (fine-tuned after MAE pretraining)](https://drive.google.com/file/d/1MhsqCvItJocv1FDhXCmlSt5Mj_LLblQq/view?usp=drive_link)
   - You can't use this model directly with torchvision, but you have to load it with HuggingFace using the `hf-16-b` model type
 
