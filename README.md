@@ -44,15 +44,15 @@ The `x` files will contain three keys:
 
 ### Pretrained Models
 
-Click the links below (or use `wget`) to download the pretrained models
+Click the links below (or use `gdown`) to download the pretrained models
 
-- [ResNet50](https://storage.googleapis.com/pcam-stain/models/base/resnet50.tar.gz)
-- [DenseNet121](https://storage.googleapis.com/pcam-stain/models/base/densenet121.tar.gz)
-- [Inception V3](https://storage.googleapis.com/pcam-stain/models/base/inception.tar.gz)
-- [Swin V2 B](https://storage.googleapis.com/pcam-stain/models/base/swinv2b.tar.gz)
-- [ViT 16 B](https://storage.googleapis.com/pcam-stain/models/base/vit16b.tar.gz)
-- [ViT 32 L](https://storage.googleapis.com/pcam-stain/models/base/vit32l.tar.gz)
-- [ViT 16 B (fine-tuned after MAE pretraining)](https://storage.googleapis.com/pcam-stain/models/base/hf-vit16b.tar.gz)
+- [ResNet50](https://drive.google.com/file/d/1jZpr0TXG2SnLWYP7_ZLHj3Pao96qU6gc/view?usp=sharing)
+- [DenseNet121](https://drive.google.com/file/d/1jZpr0TXG2SnLWYP7_ZLHj3Pao96qU6gc/view?usp=sharing)
+- [Inception V3](https://drive.google.com/file/d/1wcetqyKtpJf_7yYAg82feWsLnYmDhQeg/view?usp=drive_link)
+- [Swin V2 B](https://drive.google.com/file/d/1SioQ9vgVwOg2BGfXGuqE2wTiKtYruFAr/view?usp=drive_link)
+- [ViT 16 B](https://drive.google.com/file/d/1GbuS4TQ21K9HtlGFyPnj20OupeajuW51/view?usp=drive_link)
+- [ViT 32 L](https://drive.google.com/file/d/1xBR-3PS3UjH09IuKdOvaN-0XU5jyydhL/view?usp=drive_link)
+- [ViT 16 B (fine-tuned after MAE pretraining)](https://drive.google.com/file/d/1MhsqCvItJocv1FDhXCmlSt5Mj_LLblQq/view?usp=drive_link)
   - You can't use this model directly with torchvision, but you have to load it with HuggingFace using the `hf-16-b` model type
 
 #### Stain-Normalized
@@ -61,13 +61,13 @@ You can download the pretrained models for stain-normalized data using the follo
 
 ```sh
 # Normalized images
-wget https://storage.googleapis.com/pcam-stain/models/stain/norm.tar.gz
+gdown https://drive.google.com/uc?id=1CLq9cvCezyhmHxwNNoXNknQMvDrxQi-M
 # Original images
-wget https://storage.googleapis.com/pcam-stain/models/stain/images.tar.gz
+gdown https://drive.google.com/uc?id=1bIclV6RHi3RHs4HGlWOfI-8vhWKBjKm9
 # Hematoxylin (H) images
-wget https://storage.googleapis.com/pcam-stain/models/stain/H.tar.gz
+gdown https://drive.google.com/uc?id=1WLfXUYveL8jrgz3AkYKhO7eyP4Kw-2sC
 # Eosin (E) images
-wget https://storage.googleapis.com/pcam-stain/models/stain/E.tar.gz
+gdown https://drive.google.com/uc?id=18vSI0O1PhmU7hg49KM2atUBi6QLek3VF
 ```
 
 ## Vision Models and Data Augmentation
@@ -204,7 +204,7 @@ This repository also contains utilities to pretrain a ViT using the Masked Autoe
 The subsections below show how each step can be performed. You can download a checkpoint trained for 3 epochs on 8 WSIs (~8% of the entire Camelyon17 dataset), which correspond to ~2M image patches, using the following command:
 
 ```sh
-wget https://storage.googleapis.com/pcam-stain/models/pretrained-mae.tar.gz
+gdown https://drive.google.com/uc?id=1bMJNpdHVVH5e0dGo5Sj2qq_DQ7SsPpIQ
 ```
 
 ### Retrieving WSL images
